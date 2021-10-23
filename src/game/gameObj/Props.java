@@ -97,7 +97,7 @@ public class Props extends GameObject {
     public Type genRandomTypeInSurvivalMode() {
         int randomNum = Global.random(1, 8);
         switch (randomNum) {
-            case 1 -> {
+            case 1 -> {//道具動畫（）
                 return Type.addSpeed;
             }
             case 2 -> {
@@ -112,7 +112,7 @@ public class Props extends GameObject {
             case 5 -> {
                 return Type.superStar;
             }
-            case 6 -> {//道具動畫（閃電）
+            case 6 -> {
                 return Type.thunder;
             }
             case 7 -> {

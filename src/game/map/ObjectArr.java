@@ -113,6 +113,31 @@ public class ObjectArr {
         return computerPlayersConnectPoint;
     }
 
+    public static HashMap<Props.Type, PropsAnimation> allPropsAnimation = new HashMap<>();
+
+    public static HashMap<Props.Type, PropsAnimation> genPropsAnimation() {
+        allPropsAnimation.put(
+                Props.Type.thunder, new PropsAnimation(0,0, 1100, 700, AllImages.lightning, 2, 34));
+        allPropsAnimation.put(
+                Props.Type.superStar, new PropsAnimation(Global.SCREEN_X / 2 - 120,Global.SCREEN_Y / 2 - 90, 240, 180, AllImages.star, 8, 96));
+        allPropsAnimation.put(
+                Props.Type.hunterWatcher, new PropsAnimation(30, 0, 240, 180, AllImages.hunterWatcher, 10, 120));
+        allPropsAnimation.put(
+                Props.Type.gameTimeDecrease, new PropsAnimation(Global.SCREEN_X / 2 - 120,Global.SCREEN_Y / 2 - 90, 240, 180, AllImages.gameTimeDecrease, 8, 80));
+        allPropsAnimation.put(
+                Props.Type.trap, new PropsAnimation(0,0, 1100, 700, AllImages.lightning, 2, 30));
+        allPropsAnimation.put(
+                Props.Type.addSpeed, new PropsAnimation(Global.SCREEN_X / 2 - 120,Global.SCREEN_Y / 2 - 90, 240, 180, AllImages.addSpeed, 5, 45));
+        allPropsAnimation.put(
+                Props.Type.teleportation, new PropsAnimation(0,450, 100, 100, AllImages.teleportation, 120, 120));
+        allPropsAnimation.put(
+                Props.Type.addPoint, new PropsAnimation(0,0, 1100, 700, AllImages.lightning, 2, 30));
+        allPropsAnimation.put(
+                Props.Type.timeStop, new PropsAnimation(Global.SCREEN_X / 2 - 360,Global.SCREEN_Y / 2 - 90, 240, 180, AllImages.timeStop, 300, 300));
+
+        return allPropsAnimation;
+    }
+
 
 
 
