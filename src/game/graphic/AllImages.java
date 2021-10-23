@@ -290,5 +290,12 @@ public class AllImages {
     public static ImgArrAndType timeStop = new ImgArrAndType(new ArrayList<>(java.util.List.of(
             SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().timeStop()))),Global.MapAreaType.NONE);
 
+    //道具動畫（trap）
+    public static ImgArrAndType trap = new ImgArrAndType(new ArrayList<>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().spiderWeb()))),Global.MapAreaType.NONE);
+
+    //道具動畫（addPoint）
+    public static ImgArrAndType addPoint = new ImgArrAndType(new ArrayList<>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().addPoint()))),Global.MapAreaType.NONE);
 
 }

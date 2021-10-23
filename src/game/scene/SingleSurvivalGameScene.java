@@ -178,15 +178,10 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         skillPaint(g);
         //畫滑鼠
         mouse.paint(g);
-
-
-
         //碰撞道具時播放動畫
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).paint(g);
         }
-
-
 
         //要畫在小地圖的要加在下方
         smallMap.start(g);
@@ -228,8 +223,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).update();
         }
-
-
     }
 
     @Override
@@ -366,8 +359,8 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             Props props = propsArrayList.get(i);
             if (mainPlayer.isCollision(props)) {
                 mainPlayerCollisionProps = propsArrayList.get(i);
-                mainPlayer.collidePropsInSurvivalMode(props);
                 allPropsAnimation.get(props.getPropsType()).setPlayPropsAnimation(true);//將此道具的動畫設為開啟
+                mainPlayer.collidePropsInSurvivalMode(props);
                 props.setGotByPlayer(true);
                 propsArrayList.remove(i--);
                 continue;

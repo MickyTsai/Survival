@@ -214,15 +214,15 @@ public class Path {
             }
 
             public String forest() {
-                return this + "/forest.jpeg";
+                return this + "/forest.png";
             }
 
             public String winter() {
-                return this + "/winter.jpeg";
+                return this + "/winter.png";
             }
 
             public String volcano() {
-                return this + "/volcano.jpg";
+                return this + "/volcano.png";
             }
 
             public String village() {
@@ -232,25 +232,37 @@ public class Path {
             public String tree1() {
                 return this + "/tree1.png";
             }
+            public String tree2() {
+                return this + "/tree2.png";
+            }
 
             //冰原地圖物件
             public String winterTree1() {
                 return this + "/winterTree1.png";
+            }
+            public String winterTree2() {
+                return this + "/winterTree2.png";
             }
 
             //火山地圖物件
             public String rock() {
                 return this + "/rock.png";
             }
+            public String volcanoTree() {
+                return this + "/volcanoTree.png";
+            }
 
             //村莊地圖物件
+            public String castleWall() {
+                return this + "/castleWall.png";
+            }
+            public String tower() {
+                return this + "/tower.png";
+            }
             public String house1() {
                 return this + "/house1.png";
             }
 
-            public String house2() {
-                return this + "/house2.png";
-            }
 
         }
 
@@ -904,6 +916,15 @@ public class Path {
                 return this + "/timeStop.png";
             }
 
+            //道具動畫（trap）
+            public String spiderWeb() {
+                return this + "/spiderWeb.png";
+            }
+
+            //道具動畫（addPoint）
+            public String addPoint() {
+                return this + "/addPoint.png";
+            }
 
         }
 
