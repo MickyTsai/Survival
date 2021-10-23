@@ -88,7 +88,7 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
         computerPlayers = connectTool.getObjectArr().getComputerPlayersConnectPoint();
         propsArrayList = connectTool.getObjectArr().getPropsArrConnectPoint();
         connectTool.setMainPlayer(new Player(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.blue, Player.RoleState.PREY));
-        connectTool.createRoom(5550);
+//        connectTool.createRoom(5550);
         System.out.println("build");
     }
 
@@ -96,7 +96,7 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
     public void sceneBegin() {
         try {
 
-            connectTool.connect("127.0.0.1", 5550);
+            connectTool.connect("192.168.1.50", 5550);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
         transformObstacles.forEach(transformObstacle -> gameObjectList.addAll(java.util.List.of(transformObstacle)));
 
         //地圖與鏡頭相關
-        gameMap = new GameMap(Global.MAP_WIDTH, Global.MAP_HEIGHT);
+        gameMap = new GameMap(Global.MAP_WIDTH, Global.MAP_HEIGHT, new Path().img().map().bmp(), new Path().img().map().txt());
         unPassMapObjects = gameMap.getMapObjects();
         unPassMapObjects.forEach(mapObject -> gameObjectList.addAll(List.of(mapObject)));
         camera = new Camera(gameMap.getWidth() + 5, gameMap.getHeight() + 5);

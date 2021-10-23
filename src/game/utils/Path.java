@@ -269,6 +269,20 @@ public class Path {
             }
 
         }
+        public static class Map2 extends Flow {
+            private Map2(Flow flow) {
+                super(flow, "/map2");
+            }
+
+            public String bmp() {
+                return this + "/genMap.bmp";
+            }
+
+            public String txt() {
+                return this + "/genMap.txt";
+            }
+
+        }
 
         public static class Menu extends Flow {
             private Menu(Flow flow) {
@@ -790,6 +804,9 @@ public class Path {
         }
         public Map map() {
             return new Map(this);
+        }
+        public Map2 map2() {
+            return new Map2(this);
         }
         public Menu menu() {
             return new Menu(this);

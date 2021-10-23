@@ -21,7 +21,6 @@ public class Props extends GameObject {
         timeStop, //時間暫停
         gameTimeDecrease, // 遊戲時間減少20
         hunterWatcher; //透視獵人位置
-
     }
 
     private Animation animation; //道具本身動畫

@@ -75,8 +75,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     private ArrayList<Label> labels;
     private Label transFormCDLabel;
 
-    //道具動畫
-    private ArrayList<PropsAnimation> propsAnimationHashMap;
+
 
 
     @Override
@@ -127,7 +126,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         transformObstacles.forEach(transformObstacle -> gameObjectList.addAll(List.of(transformObstacle)));
 
         //地圖與鏡頭相關
-        gameMap = new GameMap(Global.MAP_WIDTH, Global.MAP_HEIGHT);
+        gameMap = new GameMap(Global.MAP_WIDTH, Global.MAP_HEIGHT, new Path().img().map2().bmp(), new Path().img().map2().txt());
         unPassMapObjects = gameMap.getMapObjects();
         unPassMapObjects.forEach(mapObject -> gameObjectList.addAll(List.of(mapObject)));
         camera = new Camera(gameMap.getWidth() + 5, gameMap.getHeight() + 5);
@@ -146,9 +145,10 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         printGameTime = new GameTime();
         imgClock = SceneController.getInstance().imageController().tryGetImage(new Path().img().numbers().clock());
 
-        propsAnimationHashMap = new ArrayList<>();
-    }
+        //吃到道具的動畫
+        propsAnimation = new PropsAnimation(0, 0, 1100, 700, AllImages.star, 2, 40);
 
+    }
 
     @Override
     public void sceneEnd() {
@@ -177,14 +177,15 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         //畫滑鼠
         mouse.paint(g);
 
+
+
         //碰撞道具時播放動畫
-        for (int i = 0; i < propsArrayList.size(); i++) {
-            if (propsAnimation.isPlayPropsAnimation()) {
-                System.out.println("吃到");
-                propsAnimation.paint(g);
-                propsArrayList.remove(i--);
-            }
+
+        if (propsAnimation.isPlayPropsAnimation()) {
+            System.out.println("吃到");
+            propsAnimation.paint(g);
         }
+
 
 
         //要畫在小地圖的要加在下方
@@ -222,6 +223,11 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         camera.update();
         //cd時間顯示之資料
         transFormCDLabel.setWords(String.valueOf(mainPlayer.transformCDTime()));
+
+        if (propsAnimation.isPlayPropsAnimation()) {
+            System.out.println("吃到");
+            propsAnimation.update();
+        }
     }
 
     @Override
@@ -358,6 +364,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             Props props = propsArrayList.get(i);
             if (mainPlayer.isCollision(props)) {
                 mainPlayer.collidePropsInSurvivalMode(props);
+                propsAnimation.setPlayPropsAnimation(true);//播放動畫
                 props.setGotByPlayer(true);
                 propsArrayList.remove(i--);
                 continue;
@@ -429,16 +436,13 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             }
             mainPlayer.isHunterStop = false;
         }
-
         if (mainPlayer.isDecreaseGameTime) {
             chooseTime -= 20;
             mainPlayer.isDecreaseGameTime = false;
         }
     }
 
-    private void propsAnimation () {
-        propsAnimationHashMap.add(new PropsAnimation(0, 0, 1100, 700, AllImages.lightning, 1, 20));
-    }
+
 
 
     @Override
