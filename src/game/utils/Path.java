@@ -212,7 +212,6 @@ public class Path {
             private Background(Flow flow) {
                 super(flow, "/backgrounds");
             }
-
             public String forest() {
                 return this + "/forest.png";
             }
@@ -311,9 +310,6 @@ public class Path {
                     return this + "/buttonword.png";
                 }
 
-                public String button1() {
-                    return this + "/buttonword1.png";
-                }
 
                 public String button2() {
                     return this + "/buttonword2.png";
@@ -323,8 +319,8 @@ public class Path {
                     return this + "/buttonword3.png";
                 }
 
-                public String button4() {
-                    return this + "/buttonword4.png";
+                public String GameOver() {
+                    return this + "/GameOver.png";
                 }
 
                 public String mouse() {
@@ -333,6 +329,14 @@ public class Path {
 
                 public String magicWand() {
                     return this + "/magicWand.png";
+                }
+
+                public String cross() {
+                    return this + "/cross.png";
+                }
+
+                public String button1() {
+                    return this + "/button1.png";
                 }
             }
 
@@ -435,6 +439,7 @@ public class Path {
                 public String bee1() {
                     return this + "/bee.png";
                 }
+
                 public String bee2() {
                     return this + "/bee_fly.png";
                 }
@@ -442,6 +447,7 @@ public class Path {
                 public String bunny1() {
                     return this + "/bunny1_walk1.png";
                 }
+
                 public String bunny2() {
                     return this + "/bunny1_walk2.png";
                 }
@@ -449,6 +455,7 @@ public class Path {
                 public String bunny21() {
                     return this + "/bunny2_walk1.png";
                 }
+
                 public String bunny22() {
                     return this + "/bunny2_walk2.png";
                 }
@@ -456,6 +463,7 @@ public class Path {
                 public String fishGreen1() {
                     return this + "/fishGreen.png";
                 }
+
                 public String fishGreen2() {
                     return this + "/fishGreen_swim.png";
                 }
@@ -463,6 +471,7 @@ public class Path {
                 public String fishPink1() {
                     return this + "/fishPink.png";
                 }
+
                 public String fishPink2() {
                     return this + "/fishPink_swim.png";
                 }
@@ -470,6 +479,7 @@ public class Path {
                 public String fly1() {
                     return this + "/fly.png";
                 }
+
                 public String fly2() {
                     return this + "/fly_fly.png";
                 }
@@ -477,18 +487,23 @@ public class Path {
                 public String flyMan1() {
                     return this + "/flyMan_stand.png";
                 }
+
                 public String flyMan2() {
                     return this + "/flyMan_still_fly.png";
                 }
+
                 public String flyMan3() {
                     return this + "/flyMan_fly.png";
                 }
+
                 public String flyMan4() {
                     return this + "/flyMan_jump.png";
                 }
+
                 public String flyMan5() {
                     return this + "/flyMan_still_stand.png";
                 }
+
                 public String flyMan6() {
                     return this + "/flyMan_still_jump.png";
                 }
@@ -496,6 +511,7 @@ public class Path {
                 public String frog1() {
                     return this + "/frog.png";
                 }
+
                 public String frog2() {
                     return this + "/frog_leap.png";
                 }
@@ -503,6 +519,7 @@ public class Path {
                 public String ladyBug1() {
                     return this + "/ladyBug.png";
                 }
+
                 public String ladyBug2() {
                     return this + "/ladyBug_fly.png";
                 }
@@ -510,6 +527,7 @@ public class Path {
                 public String mouse1() {
                     return this + "/mouse.png";
                 }
+
                 public String mouse2() {
                     return this + "/mouse_walk.png";
                 }
@@ -517,6 +535,7 @@ public class Path {
                 public String slime1() {
                     return this + "/slime.png";
                 }
+
                 public String slime2() {
                     return this + "/slime_squashed.png";
                 }
@@ -524,6 +543,7 @@ public class Path {
                 public String slimeBlue1() {
                     return this + "/slimeBlue.png";
                 }
+
                 public String slimeBlue2() {
                     return this + "/slimeBlue_squashed.png";
                 }
@@ -531,6 +551,7 @@ public class Path {
                 public String slimeGreen1() {
                     return this + "/slimeGreen.png";
                 }
+
                 public String slimeGreen2() {
                     return this + "/slimeGreen_squashed.png";
                 }
@@ -538,6 +559,7 @@ public class Path {
                 public String snail1() {
                     return this + "/snail.png";
                 }
+
                 public String snail2() {
                     return this + "/snail_walk.png";
                 }
@@ -545,6 +567,7 @@ public class Path {
                 public String snake1() {
                     return this + "/snake.png";
                 }
+
                 public String snake2() {
                     return this + "/snake_walk.png";
                 }
@@ -552,6 +575,7 @@ public class Path {
                 public String snakeLava1() {
                     return this + "/snakeLava.png";
                 }
+
                 public String snakeLava2() {
                     return this + "/snakeLava_ani.png";
                 }
@@ -559,6 +583,7 @@ public class Path {
                 public String snakeSlime1() {
                     return this + "/snakeSlime.png";
                 }
+
                 public String snakeSlime2() {
                     return this + "/snakeSlime_ani.png";
                 }
@@ -566,6 +591,7 @@ public class Path {
                 public String spider1() {
                     return this + "/spider_walk1.png";
                 }
+
                 public String spider2() {
                     return this + "/spider_walk2.png";
                 }
@@ -573,21 +599,98 @@ public class Path {
             }
 
 
-
             public String no() {
                 return this + "/no.png";
             }
+
             public String addSpeed() {
                 return this + "/addSpeed.png";
             }
+
             public String warningLabel() {
                 return this + "/warningLabel.png";
             }
+
             public Move move() {
                 return new Move(this);
             }
+
             public DontMove dontMove() {
                 return new DontMove(this);
+            }
+
+            public static class Numbers extends Flow {
+                private Numbers(Flow flow) {
+                    super(flow, "/numbers");
+                }
+                public String number0() {
+                    return this + "/number0.png";
+                }
+                public String number1() {
+                    return this + "/number1.png";
+                }
+                public String number2() {
+                    return this + "/number2.png";
+                }
+                public String number3() {
+                    return this + "/number3.png";
+                }
+                public String number4() {
+                    return this + "/number4.png";
+                }
+                public String number5() {
+                    return this + "/number5.png";
+                }
+                public String number6() {
+                    return this + "/number6.png";
+                }
+                public String number7() {
+                    return this + "/number7.png";
+                }
+                public String number8() {
+                    return this + "/number8.png";
+                }
+                public String number9() {
+                    return this + "/number9.png";
+                }
+                public String coin() {
+                    return this + "/coin.png";
+                }
+
+                public String numberTile0() {
+                    return this + "/numberTile0.png";
+                }
+                public String numberTile1() {
+                    return this + "/numberTile1.png";
+                }
+                public String numberTile2() {
+                    return this + "/numberTile2.png";
+                }
+                public String numberTile3() {
+                    return this + "/numberTile3.png";
+                }
+                public String numberTile4() {
+                    return this + "/numberTile4.png";
+                }
+                public String numberTile5() {
+                    return this + "/numberTile5.png";
+                }
+                public String numberTile6() {
+                    return this + "/numberTile6.png";
+                }
+                public String numberTile7() {
+                    return this + "/numberTile7.png";
+                }
+                public String numberTile8() {
+                    return this + "/numberTile8.png";
+                }
+                public String numberTile9() {
+                    return this + "/numberTile9.png";
+                }
+                public String clock() {
+                    return this + "/clock.png";
+                }
+
             }
 
 
@@ -597,107 +700,40 @@ public class Path {
             private DontMove(Flow flow) {
                 super(flow, "/dontmove");
             }
+
             public String question1() {
                 return this + "/questionbox1.png";
             }
+
             public String question2() {
                 return this + "/questionbox2.png";
             }
+
             public String question3() {
                 return this + "/questionbox3.png";
             }
+
             public String runnerLight() {
                 return this + "/runnerlight.png";
             }
+
             public String runnerDark() {
                 return this + "/runnerdark.png";
             }
+
             public String runnernormal() {
                 return this + "/runnernormal.png";
             }
+
             public String changeBody() {
                 return this + "/changeRoleButton.png";
             }
+
             public String nothing() {
                 return this + "/nothing.png";
             }
 
         }
-
-        public static class Numbers extends Flow {
-            private Numbers(Flow flow) {
-                super(flow, "/numbers");
-            }
-            public String number0() {
-                return this + "/number0.png";
-            }
-            public String number1() {
-                return this + "/number1.png";
-            }
-            public String number2() {
-                return this + "/number2.png";
-            }
-            public String number3() {
-                return this + "/number3.png";
-            }
-            public String number4() {
-                return this + "/number4.png";
-            }
-            public String number5() {
-                return this + "/number5.png";
-            }
-            public String number6() {
-                return this + "/number6.png";
-            }
-            public String number7() {
-                return this + "/number7.png";
-            }
-            public String number8() {
-                return this + "/number8.png";
-            }
-            public String number9() {
-                return this + "/number9.png";
-            }
-            public String coin() {
-                return this + "/coin.png";
-            }
-
-            public String numberTile0() {
-                return this + "/numberTile0.png";
-            }
-            public String numberTile1() {
-                return this + "/numberTile1.png";
-            }
-            public String numberTile2() {
-                return this + "/numberTile2.png";
-            }
-            public String numberTile3() {
-                return this + "/numberTile3.png";
-            }
-            public String numberTile4() {
-                return this + "/numberTile4.png";
-            }
-            public String numberTile5() {
-                return this + "/numberTile5.png";
-            }
-            public String numberTile6() {
-                return this + "/numberTile6.png";
-            }
-            public String numberTile7() {
-                return this + "/numberTile7.png";
-            }
-            public String numberTile8() {
-                return this + "/numberTile8.png";
-            }
-            public String numberTile9() {
-                return this + "/numberTile9.png";
-            }
-            public String clock() {
-                return this + "/clock.png";
-            }
-
-        }
-
 
         public static class PropsAnimation extends Flow {
             private PropsAnimation(Flow flow) {
@@ -928,27 +964,129 @@ public class Path {
 
         }
 
+        public static class Numbers extends Flow {
+            private Numbers(Flow flow) {
+                super(flow, "/numbers");
+            }
+
+            public String number0() {
+                return this + "/number0.png";
+            }
+
+            public String number1() {
+                return this + "/number1.png";
+            }
+
+            public String number2() {
+                return this + "/number2.png";
+            }
+
+            public String number3() {
+                return this + "/number3.png";
+            }
+
+            public String number4() {
+                return this + "/number4.png";
+            }
+
+            public String number5() {
+                return this + "/number5.png";
+            }
+
+            public String number6() {
+                return this + "/number6.png";
+            }
+
+            public String number7() {
+                return this + "/number7.png";
+            }
+
+            public String number8() {
+                return this + "/number8.png";
+            }
+
+            public String number9() {
+                return this + "/number9.png";
+            }
+
+            public String coin() {
+                return this + "/coin.png";
+            }
+
+            public String numberTile0() {
+                return this + "/numberTile0.png";
+            }
+
+            public String numberTile1() {
+                return this + "/numberTile1.png";
+            }
+
+            public String numberTile2() {
+                return this + "/numberTile2.png";
+            }
+
+            public String numberTile3() {
+                return this + "/numberTile3.png";
+            }
+
+            public String numberTile4() {
+                return this + "/numberTile4.png";
+            }
+
+            public String numberTile5() {
+                return this + "/numberTile5.png";
+            }
+
+            public String numberTile6() {
+                return this + "/numberTile6.png";
+            }
+
+            public String numberTile7() {
+                return this + "/numberTile7.png";
+            }
+
+            public String numberTile8() {
+                return this + "/numberTile8.png";
+            }
+
+            public String numberTile9() {
+                return this + "/numberTile9.png";
+            }
+
+            public String clock() {
+                return this + "/clock.png";
+            }
+
+        }
+
         public Actors actors() {
             return new Actors(this);
         }
+
         public Animals animals() {
             return new Animals(this);
         }
+
         public Background background() {
             return new Background(this);
         }
+
         public Map map() {
             return new Map(this);
         }
+
         public MapSurvival mapSurvival() {
             return new MapSurvival(this);
         }
+
         public Menu menu() {
             return new Menu(this);
         }
+
         public Objs objs() {
             return new Objs(this);
         }
+
         public Numbers numbers() {
             return new Numbers(this);
         }
@@ -962,6 +1100,97 @@ public class Path {
     public static class Sound extends Flow {
         private Sound() {
             super(new Resources(), "/sounds");
+        }
+
+        public static class Background extends Flow {
+            private Background(Flow flow) {
+                super(flow, "/background");
+            }
+
+            public String countScene() {
+                return this + "/countScene.wav";
+            }
+
+            public String gamebehind60() {
+                return this + "/gamebehind60.wav";
+            }
+
+            public String gamebehindfast() {
+                return this + "/gamebehindfast.wav";
+            }
+
+            public String gamebehindfinal() {
+                return this + "/gamebehindfinal.wav";
+            }
+
+            public String gameFirst() {
+                return this + "/gameFirst.wav";
+            }
+
+            public String gamefirst2() {
+                return this + "/gamefirst2.wav";
+            }
+
+            public String gameover() {
+                return this + "/gameover.wav";
+            }
+
+            public String lovelyflower() {
+                return this + "/lovelyflower.wav";
+            }
+
+            public String mainscene() {
+                return this + "/mainscene.wav";
+            }
+
+            public String manyhunterscenemedium() {
+                return this + "/manyhunterscenemedium.wav";
+            }
+
+            public String manyhuterscencefirst() {
+                return this + "/manyhuterscencefirst.wav";
+            }
+
+            public String normalgamebehind30() {
+                return this + "/normalgamebehind30.wav";
+            }
+
+            public String normalgamebehind30final() {
+                return this + "/normalgamebehind30final.wav";
+            }
+
+            public String superstar() {
+                return this + "/superstar.wav";
+            }
+
+            public String thunder() {
+                return this + "/thunder.wav";
+            }
+
+            public String teleportation() {
+                return this + "/teleportation.wav";
+            }
+
+            public String transform() {
+                return this + "/transform.wav";
+            }
+
+            public String addSpeed() {
+                return this + "/addSpeed.wav";
+            }
+
+            public String trap() {
+                return this + "/trap.wav";
+            }
+
+            public String openScene() {
+                return this + "/openScene.wav";
+            }
+
+        }
+
+        public Background background() {
+            return new Background(this);
         }
     }
 

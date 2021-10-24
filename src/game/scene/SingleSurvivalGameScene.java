@@ -1,8 +1,8 @@
 package game.scene;
 
+import game.Menu.*;
 import game.Menu.Label;
-import game.Menu.MenuScene;
-import game.Menu.Mouse;
+import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.GameTime;
 import game.core.Global;
@@ -30,17 +30,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * 獵人吃到道具不會加速，道具多點，道具功能增加
- */
+
 public class SingleSurvivalGameScene extends Scene implements CommandSolver.MouseCommandListener, CommandSolver.KeyListener {
     private ArrayList<GameObject> gameObjectList; //將Game要畫的所有GameObject存起來
     //留意畫的順序
     private Player mainPlayer;
     private ArrayList<ComputerPlayer> computerPlayers;
-    private ArrayList<TransformObstacle> transformObstacles = ObjectArr.transformObstaclList1;
+    private ArrayList<TransformObstacle> transformObstacles;
     private ArrayList<MapObject> unPassMapObjects;
-    private ArrayList<Props> propsArrayList = ObjectArr.propsArrSurvivalGame;
+    private ArrayList<Props> propsArrayList;
     private Camera camera;
     private SmallMap smallMap;
     private GameMap gameMap;
@@ -53,7 +51,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     //道具生成與消失
     private Delay propsReProduce;
     private Delay propsRemove;
-
+    private Delay propAnimationDelay;//計時吃到道具動畫播放時間
 
     //時間計算
     private long startTime;
@@ -68,8 +66,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     Animation runner;
     Animation changeBody;
 
-    //滑鼠
-    private Mouse mouse;
 
     //提示訊息(畫面上所有的文字處理)
     private ArrayList<Label> labels;
@@ -80,14 +76,18 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     private HashMap<Props.Type, PropsAnimation> allPropsAnimation;
     private Props mainPlayerCollisionProps;
 
+
     @Override
     public void sceneBegin() {
+        AudioResourceController.getInstance().loop(new Path().sound().background().gamefirst2(), -1);
         //遊戲時間
         startTime = System.nanoTime();
         chooseTime = 300; //單位：秒
         //初始ArrayList
         gameObjectList = new ArrayList<>();
         computerPlayers = new ArrayList<>();
+        transformObstacles = ObjectArr.transformObstaclList1;
+        propsArrayList = ObjectArr.propsArrSurvivalGame;
         labels = new ArrayList<Label>();
 
         //道具相關
@@ -97,18 +97,18 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         propsRemove.loop();
         propsReProduce.play();
         propsReProduce.loop();
-
+        propAnimationDelay = new Delay(19);
 
         //主角
-        mainPlayer = new Player(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.blue, Player.RoleState.PREY);
+        mainPlayer = new Player(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.blue, Player.RoleState.PREY, "Player 1");
         //新增電腦玩家
 
-        computerPlayers.add(new ComputerPlayer(100, 100, AllImages.beige, Player.RoleState.HUNTER));
-        computerPlayers.add(new ComputerPlayer(900, 3200, AllImages.beige, Player.RoleState.HUNTER));
-        computerPlayers.add(new ComputerPlayer(2300, 3000, AllImages.beige, Player.RoleState.HUNTER));
-        computerPlayers.add(new ComputerPlayer(100, 2300, AllImages.beige, Player.RoleState.HUNTER));
-        computerPlayers.add(new ComputerPlayer(1599, 500, AllImages.beige, Player.RoleState.HUNTER));
-        computerPlayers.add(new ComputerPlayer(100, 2500, AllImages.beige, Player.RoleState.HUNTER));
+        computerPlayers.add(new ComputerPlayer(100, 100, AllImages.beige, Player.RoleState.HUNTER, "1"));
+        computerPlayers.add(new ComputerPlayer(900, 3200, AllImages.beige, Player.RoleState.HUNTER, "2"));
+        computerPlayers.add(new ComputerPlayer(2300, 3000, AllImages.beige, Player.RoleState.HUNTER, "3"));
+        computerPlayers.add(new ComputerPlayer(100, 2300, AllImages.beige, Player.RoleState.HUNTER, "4"));
+        computerPlayers.add(new ComputerPlayer(1599, 500, AllImages.beige, Player.RoleState.HUNTER, "5"));
+        computerPlayers.add(new ComputerPlayer(100, 2500, AllImages.beige, Player.RoleState.HUNTER, "6"));
 
         //預設難度一
         for (ComputerPlayer computerPlayer : computerPlayers) {
@@ -118,9 +118,9 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         runner = new Animation(AllImages.runnerDark);
         changeBody = new Animation(AllImages.changeBody);
 
-        transFormCDLabel = new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30, String.valueOf(mainPlayer.transformCDTime()), 20);
-        labels.add(new Label(Global.RUNNER_X + 75, Global.RUNNER_Y + 85, "F", 20));
-        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 75, Global.RUNNER_Y + 85, "R", 20));
+        transFormCDLabel = new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30, String.valueOf(mainPlayer.transformCDTime()), FontLoader.Future(20));
+        labels.add(new Label(Global.RUNNER_X + 75, Global.RUNNER_Y + 85, "F", FontLoader.Future(20)));
+        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 75, Global.RUNNER_Y + 85, "R", FontLoader.Future(20)));
         labels.add(transFormCDLabel);
 
         //將要畫的物件存進ArrayList 為了要能在ArrayList取比較 重疊時畫的先後順序（y軸）
@@ -141,8 +141,8 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         imgVolcano = SceneController.getInstance().imageController().tryGetImage(new Path().img().background().volcano());
         imgVillage = SceneController.getInstance().imageController().tryGetImage(new Path().img().background().village());
 
-        //滑鼠
-        mouse = new Mouse(0, 0, 50, 50);
+//        //滑鼠
+//        mouse = new Mouse(0, 0, 50, 50);
 
         printGameTime = new GameTime();
         imgClock = SceneController.getInstance().imageController().tryGetImage(new Path().img().numbers().clock());
@@ -152,9 +152,18 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         allPropsAnimation = objectArr.genPropsAnimation();
     }
 
+
     @Override
     public void sceneEnd() {
-        SceneController.getInstance().change(new MenuScene());
+        gameObjectList = null;
+        this.gameMap = null;
+        this.transformObstacles = null;
+        GameOverScene gameOverScene = new GameOverScene();
+        AudioResourceController.getInstance().stop(new Path().sound().background().gamefirst2());
+        AudioResourceController.getInstance().stop(new Path().sound().background().manyhuterscencefirst());
+        AudioResourceController.getInstance().stop(new Path().sound().background().manyhunterscenemedium());
+        AudioResourceController.getInstance().stop(new Path().sound().background().gamebehindfinal());
+        SceneController.getInstance().change(new GameOverScene());
     }
 
     @Override
@@ -176,19 +185,19 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         paintTime(g);
         //顯示技能
         skillPaint(g);
-        //畫滑鼠
-        mouse.paint(g);
         //碰撞道具時播放動畫
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).paint(g);
         }
 
+
+        Global.mouse.paint(g);
         //要畫在小地圖的要加在下方
         smallMap.start(g);
         gameMap.paint(g);
         smallMap.paint(g, mainPlayer, Color.red, 100, 100);//小地圖的需要另外再paint一次
         if (Global.IS_DEBUG || mainPlayer.isHunterWatcher) {
-            for (int i = 1; i < computerPlayers.size(); i++) {
+            for (int i = 0; i < computerPlayers.size(); i++) {
                 smallMap.paint(g, computerPlayers.get(i), Color.YELLOW, 100, 100);
             }
         }
@@ -218,7 +227,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         camera.update();
         //cd時間顯示之資料
         transFormCDLabel.setWords(String.valueOf(mainPlayer.transformCDTime()));
-
         //碰撞道具時播放動畫的更新
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).update();
@@ -256,7 +264,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
      * 電腦玩家偵查道具
      */
     public void cPlayerCheckPropsUpdate() {
-        for (int i = 1; i < computerPlayers.size(); i++) {
+        for (int i = 0; i < computerPlayers.size(); i++) {
             ComputerPlayer computerPlayer = computerPlayers.get(i);
             for (int j = 0; j < propsArrayList.size(); j++) {
                 computerPlayer.whichPropIsNear(propsArrayList.get(j));
@@ -405,14 +413,25 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     }
 
     public void levelUpdate() {
-        if ((int) lastTime == 150) {
+        if ((int) lastTime == 250) {
+            AudioResourceController.getInstance().stop(new Path().sound().background().gamefirst2());
+            AudioResourceController.getInstance().play(new Path().sound().background().manyhuterscencefirst());
             for (ComputerPlayer computerPlayer : computerPlayers) {
                 computerPlayer.AILevel2();
             }
         }
-        if ((int) lastTime == 50) {
+        if ((int) lastTime == 180) {
+            AudioResourceController.getInstance().stop(new Path().sound().background().manyhuterscencefirst());
+            AudioResourceController.getInstance().play(new Path().sound().background().manyhunterscenemedium());
             for (ComputerPlayer computerPlayer : computerPlayers) {
                 computerPlayer.AILevel3();
+            }
+        }
+        if ((int) lastTime == 57) {
+            AudioResourceController.getInstance().stop(new Path().sound().background().manyhunterscenemedium());
+            AudioResourceController.getInstance().play(new Path().sound().background().gamebehindfinal());
+            for (ComputerPlayer computerPlayer : computerPlayers) {
+                computerPlayer.AILevel4();
             }
         }
     }
@@ -432,13 +451,12 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             }
             mainPlayer.isHunterStop = false;
         }
+
         if (mainPlayer.isDecreaseGameTime) {
             chooseTime -= 20;
             mainPlayer.isDecreaseGameTime = false;
         }
     }
-
-
 
 
     @Override
@@ -473,6 +491,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             }
             mainPlayer.useTeleportation(mouseX, mouseY);
         }
-        mouse.mouseTrig(e, state, trigTime);
+        Global.mouse.mouseTrig(e, state, trigTime);
     }
 }

@@ -42,7 +42,12 @@ public class MapObject extends GameObject {
     }
 
 
+
     //要能帶入資源 以利格子上決定哪個圖
+
+    public Image getImg() {
+        return img;
+    }
     public MapObject(int x, int y, int width, int height, String MapObjectName) {
         super(x, y, width, height);
 
@@ -101,10 +106,6 @@ public class MapObject extends GameObject {
                 break;
         }
         img = SceneController.getInstance().imageController().tryGetImage(this.type.path);
-    }
-
-    public Image getImg() {
-        return img;
     }
 
 

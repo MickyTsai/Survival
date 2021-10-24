@@ -50,11 +50,6 @@ public class MapLoader {
      * @param mapInfos 地圖資訊
      * @return 地圖資料（自定義類Tile）的物件陣列
      */
-    /**
-     * 透過地圖資訊 轉換為 自定義的地圖物件
-     * @param mapInfos 地圖資訊
-     * @return 地圖資料（自定義類Tile）的物件陣列
-     */
     public ArrayList<MapObject> createObjectArray(ArrayList<MapInfo> mapInfos) {
         // 創建陣列儲存地圖物件
         ArrayList<MapObject> mapMapObjects = new ArrayList<>();
@@ -138,4 +133,5 @@ public class MapLoader {
         }
         return mapMapObjects;
     }
+
 }

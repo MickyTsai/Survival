@@ -17,12 +17,14 @@ import game.network.Client.ClientClass;
 import game.scene_process.Camera;
 import game.utils.CommandSolver;
 import game.utils.Delay;
+import game.utils.Path;
+import game.controllers.AudioResourceController;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import static game.gameObj.Pact.bale;
+import static game.gameObj.Pact.*;
 import static game.gameObj.Props.Type.trap;
 
 public class Player extends GameObject implements CommandSolver.KeyListener {
@@ -86,7 +88,11 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     private boolean isInClosedArea;
 
     //連線相關
-    private int id;
+    private int id = 0;
+
+    //名字
+    private String name;
+
 
     //for連線用的Player 需要 set當前動畫 和 set是什麼身分
 //    public Player(int x, int y, ImgArrAndType imageArrayList, RoleState roleState) {
@@ -121,12 +127,13 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
 //    }
 
 
-    public Player(int x, int y, ImgArrAndType imageArrayList, RoleState roleState) {
+    public Player(int x, int y, ImgArrAndType imageArrayList, RoleState roleState, String name) {
         super(x, y, Global.PLAYER_WIDTH, Global.PLAYER_HEIGHT);
         movement = new Movement(Global.NORMAL_SPEED);//一般角色移動
         collider().scale(painter().width() - 10, painter().height() - 10);
         painter().setCenter(collider().centerX(), collider().centerY());
         point = 0;
+        this.name = name;
 
         canMove = true;
         canPass = true;
@@ -144,7 +151,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         collisionDelay = new Delay(180);
         canMoveDelay = new Delay(300);
         transformCD = new Delay(600); //十秒
-        transformTime = new Delay(900); //十五秒
+        transformTime = new Delay(420); //七秒
         trapDelay = new Delay(120);
         superStarDelay = new Delay(600);
         hunterWatcherDelay = new Delay(600);
@@ -208,9 +215,14 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         if (state == CommandSolver.MouseState.CLICKED) {
             int mouseX = e.getX() + camera.painter().left();
             int mouseY = e.getY() + camera.painter().top();
-            for (TransformObstacle transformObstacle : transformObstacles) {
+            for (int i = 0; i < transformObstacles.size(); i++) {
+                TransformObstacle transformObstacle = transformObstacles.get(i);
                 if (transformObstacle.isXYin(mouseX, mouseY)) {
-                    chooseTransformObject(transformObstacle);
+                    if (id != 0) {
+                        ClientClass.getInstance().sent(PLAYER_CHOOSE_TRANSFORM, bale(Integer.toString(i)));
+                    } else {
+                        chooseTransformObject(transformObstacle);
+                    }
                 }
             }
             for (MapObject mapObject : unPassMapObjects) {
@@ -218,7 +230,11 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                     return;
                 }
             }
-            useTeleportation(mouseX, mouseY);
+            if (id != 0) {
+                ClientClass.getInstance().sent(PLAYER_USE_TELEPORTATION, bale(Integer.toString(mouseX), Integer.toString(mouseY)));
+            } else {
+                useTeleportation(mouseX, mouseY);
+            }
         }
         mouse.mouseTrig(e, state, trigTime);
     }
@@ -340,6 +356,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 roleState == RoleState.HUNTER) {
             return;
         }
+        AudioResourceController.getInstance().play(new Path().sound().background().transform());
         currentAnimation = storedTransformAnimation;
         transformCD.play();
         if (!transformTime.count()) {
@@ -409,6 +426,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         if (!isUseTeleportation || !canUseTeleportation) {
             return;
         }
+        AudioResourceController.getInstance().play(new Path().sound().background().teleportation());
         setXY(x, y);
         isUseTeleportation = false;
         canUseTeleportation = false;
@@ -421,6 +439,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG) {
                     System.out.println("加速");
                 }
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 if (movement.getSpeed() < Global.SPEED_MAX) {
                     movement.addSpeed(1);
                 }
@@ -430,6 +449,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG) {
                     System.out.println("瞬移");
                 }
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 canUseTeleportation = true;
                 break;
 
@@ -437,6 +457,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG) {
                     System.out.println("不能動");
                 }
+                AudioResourceController.getInstance().play(new Path().sound().background().trap());
                 canMove = false;
                 trapDelay.play();
                 break;
@@ -444,6 +465,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG) {
                     System.out.println("加分");
                 }
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 point += 10;
         }
     }
@@ -454,30 +476,34 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG)
                     System.out.println("加速");
                 if (movement.getSpeed() < Global.SPEED_MAX) {
-                    movement.addSpeed(2);
+                    movement.addSpeed(1);
                 }
                 break;
 
             case teleportation:
                 if (Global.IS_DEBUG)
                     System.out.println("瞬移");
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 canUseTeleportation = true;
                 break;
 
             case trap:
                 if (Global.IS_DEBUG)
                     System.out.println("不能動");
+                AudioResourceController.getInstance().play(new Path().sound().background().trap());
                 canMove = false;
                 trapDelay.play();
                 break;
             case thunder:
                 if (Global.IS_DEBUG)
                     System.out.println("打雷");
+                AudioResourceController.getInstance().play(new Path().sound().background().thunder());
                 isThunder = true;
                 break;
             case superStar:
                 if (Global.IS_DEBUG)
                     System.out.println("超級星星");
+                AudioResourceController.getInstance().play(new Path().sound().background().superstar());
                 superStarDelay.play();
                 isSuperStar = true;
                 currentSpeed = movement.getSpeed();
@@ -492,12 +518,14 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 if (Global.IS_DEBUG) {
                     System.out.println("透視");
                 }
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 hunterWatcherDelay.play();
                 isHunterWatcher = true;
                 break;
             default:
                 if (Global.IS_DEBUG)
                     System.out.println("遊戲時間減少");
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 isDecreaseGameTime = true;
 
         }
@@ -506,6 +534,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public void propsEffectUpdate() {
         if (superStarDelay.count()) {
             isSuperStar = false;
+            AudioResourceController.getInstance().stop(new Path().sound().background().superstar());
             movement.setSpeed(currentSpeed);
         }
         if (hunterWatcherDelay.count()) {
@@ -592,5 +621,13 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
 
     public int ID() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Animation getCurrentAnimation() {
+        return currentAnimation;
     }
 }

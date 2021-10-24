@@ -145,10 +145,6 @@ public class AllImages {
             SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().spider1()),
             SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().spider2()))), Global.MapAreaType.VILLAGE);
 
-//    //addSpeed
-//    public static ImgArrAndType addSpeed = new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
-//            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().addSpeed()))), Global.MapAreaType.NONE);
-
     //questionBox
     public static ImgArrAndType questionBox = new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
             SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().dontMove().question1()),
@@ -202,6 +198,19 @@ public class AllImages {
     public static ImgArrAndType no=new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
             SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().no()))),Global.MapAreaType.NONE);
 
+
+    //cross
+    public static ImgArrAndType cross=new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Button().cross()))),Global.MapAreaType.NONE);
+
+    //button1
+    public static ImgArrAndType button1=new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Button().button1()))),Global.MapAreaType.NONE);
+
+    //GameOver
+    public static ImgArrAndType gameOver=new ImgArrAndType(new ArrayList<Image>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Button().GameOver()))),Global.MapAreaType.NONE);
+
     //lightning
     public static ImgArrAndType lightning = new ImgArrAndType(new ArrayList<>(List.of(
             SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().lightning0()),
@@ -237,7 +246,6 @@ public class AllImages {
             SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().star10()),
             SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().star11()),
             SceneController.getInstance().imageController().tryGetImage(new Path().img().propsAnimation().star12()))),Global.MapAreaType.NONE);
-
 
     //道具動畫（gameTimeDecrease）
     public static ImgArrAndType gameTimeDecrease = new ImgArrAndType(new ArrayList<>(java.util.List.of(
