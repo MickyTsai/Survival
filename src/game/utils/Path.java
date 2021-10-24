@@ -1187,6 +1187,10 @@ public class Path {
                 return this + "/openScene.wav";
             }
 
+            public String exchange() {
+                return this + "/exchange.wav";
+            }
+
         }
 
         public Background background() {

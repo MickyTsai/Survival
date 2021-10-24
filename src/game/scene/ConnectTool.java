@@ -25,6 +25,7 @@ public class ConnectTool implements GameKernel.GameInterface {
     private Player mainPlayer;
     private ArrayList<Player> mainPlayers;
     private ObjectArr objectArr;
+    private boolean isServer;
 //    private ArrayList<MapObject> unPassMapObjects;      連接Scene時，建構子時{set自己角色(new 角色)，加進players}，Scenebegin()，再sent自己創角的訊息出去，server在等人連接的畫面只要一直consume即可。
 //    private ArrayList<TransformObstacle> transformObstacles;
 
@@ -34,6 +35,7 @@ public class ConnectTool implements GameKernel.GameInterface {
         objectArr = new ObjectArr();
         isConnect = false;
         this.mainPlayers = new ArrayList<>();
+        isServer = false;
     }
 
     public static ConnectTool instance() {
@@ -110,7 +112,12 @@ public class ConnectTool implements GameKernel.GameInterface {
                                 }
                             }
                             if (!isburn) {
-                                Player newPlayer = new Player(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(0))), Player.RoleState.PREY, strs.get(1));
+                                Player newPlayer;
+                                if (serialNum == 100) {
+                                    newPlayer = new Player(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(2))), Player.RoleState.HUNTER, strs.get(3));
+                                } else {
+                                    newPlayer = new Player(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(2))), Player.RoleState.PREY, strs.get(3));
+                                }
                                 newPlayer.setID(serialNum);
                                 mainPlayers.add(newPlayer);
                                 ClientClass.getInstance().sent(CONNECT, bale(strs.get(0), strs.get(1)));
@@ -314,4 +321,11 @@ public class ConnectTool implements GameKernel.GameInterface {
         ct = null;
     }
 
+    public void setServer(boolean server) {
+        isServer = server;
+    }
+
+    public boolean isServer() {
+        return isServer;
+    }
 }

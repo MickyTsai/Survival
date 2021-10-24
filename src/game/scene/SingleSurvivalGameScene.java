@@ -211,6 +211,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         propsGenUpdate();
         allPropsUpdate();
         propsEffectUpdate();
+
         //難度更新
         levelUpdate();
         //為了解決player與npc重疊時 畫面物件顯示先後順序問題
@@ -219,18 +220,21 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         keepNotPass(unPassMapObjects);
         //用forEach將ArrayList中每個gameObject去update()
         mainPlayer.update();
+        camera.update();
+
         gameObjectList.forEach(gameObject -> gameObject.update());
         cPlayerCheckOthersUpdate();
         cPlayerCheckPropsUpdate();
         playerCollisionCheckUpdate();
         propsCollisionCheckUpdate();
-        camera.update();
+
         //cd時間顯示之資料
         transFormCDLabel.setWords(String.valueOf(mainPlayer.transformCDTime()));
         //碰撞道具時播放動畫的更新
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).update();
         }
+
     }
 
     @Override

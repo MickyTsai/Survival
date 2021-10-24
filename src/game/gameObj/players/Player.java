@@ -294,6 +294,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                     bumpPlayer = player;
                     bump(bumpPlayer);
                     pointExchange(bumpPlayer);
+                    AudioResourceController.getInstance().play(new Path().sound().background().exchange());
                 }
             }
         }

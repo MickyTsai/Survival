@@ -3,6 +3,7 @@ package game.Menu;
 import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
+import game.core.Position;
 import game.gameObj.players.Player;
 import game.graphic.AllImages;
 import game.graphic.ImgArrAndType;
@@ -30,11 +31,20 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
     private String name;
     private ImgArrAndType imgArrAndType;
     private int port;
+    private int x;
+    private int y;
 
     public WaitingScene(String IP, String name, ImgArrAndType imgArrAndType, int port) {
         this.name = name;
         this.imgArrAndType = imgArrAndType;
-        ConnectTool.instance().setMainPlayer(new Player(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, this.imgArrAndType, Player.RoleState.PREY, this.name));
+        Position position = randomPosition();
+        x = position.intX();
+        y = position.intY();
+        if (ConnectTool.instance().isServer()) {
+            ConnectTool.instance().setMainPlayer(new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.HUNTER, this.name));
+        } else {
+            ConnectTool.instance().setMainPlayer(new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.PREY, this.name));
+        }
         this.IP = IP;
         this.port = port;
     }
@@ -71,7 +81,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
 
     @Override
     public void update() {
-        ClientClass.getInstance().sent(CONNECT, bale(Integer.toString(ChooseRoleScene.imgArrAndTypeParse(imgArrAndType)), name));
+        ClientClass.getInstance().sent(CONNECT, bale(Integer.toString(x),Integer.toString(y) , Integer.toString(ChooseRoleScene.imgArrAndTypeParse(imgArrAndType)), name));
         buttons.update();
         ConnectTool.instance().consume();
     }
@@ -98,6 +108,20 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
                     ClientClass.getInstance().sent(START_GAME, bale());
                 }
             }
+        }
+    }
+
+    public static Position randomPosition() {
+        int number = Global.random(1, 4);
+        switch (number) {
+            case 1:
+                return new Position(1700, 300);
+            case 2:
+                return new Position(2100, 789);
+            case 3:
+                return new Position(980, 2500);
+            default:
+                return new Position(2634, 2718);
         }
     }
 }

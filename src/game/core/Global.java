@@ -60,7 +60,7 @@ public class Global {
         NONE;
     }
 
-    public static final boolean IS_DEBUG = false;
+    public static final boolean IS_DEBUG = true;
 
     public static final int UPDATE_TIMES_PER_SEC = 60;
     public static final int NANOSECOUND_PER_UPDATE = 1000000000 / UPDATE_TIMES_PER_SEC;
@@ -94,7 +94,7 @@ public class Global {
     public static final int MAP_PIXEL_HEIGHT = MAP_HEIGHT * UNIT_HEIGHT;
 
     //角色移動速度
-    public static final int NORMAL_SPEED = 2;
+    public static final int NORMAL_SPEED = 5;
     public static final int COMPUTER_SPEED1 = 3;
     public static final int COMPUTER_SPEED2 = 5;
     public static final int COMPUTER_SPEED3 = 8;
