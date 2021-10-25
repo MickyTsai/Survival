@@ -35,6 +35,7 @@ public class PropsAnimation extends Animation {
                 AnimationTime.play();
             }
             g.drawImage(img.getImageArrayList().get(count), x, y, width, height, null);
+
             if (AnimationTime.count()) {
                 playPropsAnimation = false;
             }

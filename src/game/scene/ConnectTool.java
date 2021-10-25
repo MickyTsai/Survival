@@ -232,7 +232,7 @@ public class ConnectTool implements GameKernel.GameInterface {
                                 }
                             }
                             if (player1 != null && player2 != null) {
-                                player1.exchangeRole(player2);
+                                player1.exchangeRoleInConnect(player2);
                             }
                             break;
                         case PLAYER_COLLISION_COMPUTER:
@@ -296,6 +296,13 @@ public class ConnectTool implements GameKernel.GameInterface {
                             break;
                         case START_GAME:
                             SceneController.getInstance().change(new ConnectPointGameScene());
+                            break;
+                        case POINT_UPDATE:
+                            mainPlayers.forEach(player -> {
+                                if (player.ID() == Integer.parseInt(strs.get(0))) {
+                                    player.setPoint(Integer.parseInt(strs.get(1)));
+                                }
+                            });
                             break;
                     }
                 }
