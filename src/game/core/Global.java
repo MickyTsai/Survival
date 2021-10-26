@@ -16,7 +16,8 @@ public class Global {
         LEFT(4),
         RIGHT(5),
         TRANSFORM(6),
-        TELEPORTATION(7);
+        TELEPORTATION(7),
+        ESCAPE(8);
 
 
         private int value;
@@ -94,11 +95,11 @@ public class Global {
     public static final int MAP_PIXEL_HEIGHT = MAP_HEIGHT * UNIT_HEIGHT;
 
     //角色移動速度
-    public static final int NORMAL_SPEED = 5;
-    public static final int COMPUTER_SPEED1 = 3;
-    public static final int COMPUTER_SPEED2 = 5;
-    public static final int COMPUTER_SPEED3 = 8;
-    public static final int COMPUTER_SPEED4 = 11;
+    public static final int NORMAL_SPEED = 3;
+    public static final int COMPUTER_SPEED1 = 2;
+    public static final int COMPUTER_SPEED2 = 3;
+    public static final int COMPUTER_SPEED3 = 4;
+    public static final int COMPUTER_SPEED4 = 5;
 
     //電腦追蹤移動獵物範圍
     public static final int COMPUTER_CHASE_DISTANCE1 = 300;
@@ -113,9 +114,9 @@ public class Global {
     public static final int COMPUTER_GIVE_UP_DISTANCE4 = 2000;
 
     //電腦追蹤道具範圍
-    public static final int COMPUTER_PROPS_CHASE_DISTANCE1 = 200;
-    public static final int COMPUTER_PROPS_CHASE_DISTANCE2 = 400;
-    public static final int COMPUTER_PROPS_CHASE_DISTANCE3 = 600;
+    public static final int COMPUTER_PROPS_CHASE_DISTANCE1 = 100;
+    public static final int COMPUTER_PROPS_CHASE_DISTANCE2 = 200;
+    public static final int COMPUTER_PROPS_CHASE_DISTANCE3 = 300;
 
 
     //預設AI感知之最近距離

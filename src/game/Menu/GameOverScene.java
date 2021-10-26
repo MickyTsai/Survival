@@ -29,11 +29,9 @@ public class GameOverScene extends Scene implements CommandSolver.MouseCommandLi
 
     @Override
     public void sceneEnd() {
-        this.button = null;
         this.animation = null;
         this.img = null;
         AudioResourceController.getInstance().stop(new Path().sound().background().gameover());
-        SceneController.getInstance().change(new MenuScene());
     }
 
     @Override
@@ -66,7 +64,7 @@ public class GameOverScene extends Scene implements CommandSolver.MouseCommandLi
         }
         if (state == CommandSolver.MouseState.CLICKED) {
             if (Global.mouse.isCollision(button)) {
-                sceneEnd();
+                SceneController.getInstance().change(new MenuScene());
             }
         }
     }

@@ -6,6 +6,7 @@ import game.utils.Delay;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class EditText extends Label implements CommandSolver.KeyListener {
 
@@ -16,6 +17,8 @@ public class EditText extends Label implements CommandSolver.KeyListener {
     private Boolean isEditable;
     private Delay delay;
     private int size;
+    ArrayList <Label> labels;
+    private int count;
 
 
     public EditText(int x, int y,String hintString) {
@@ -26,7 +29,11 @@ public class EditText extends Label implements CommandSolver.KeyListener {
         delay.loop();
         editLimit=15;
         editText="";
-        this.size=size;
+        count=0;
+        labels=new ArrayList<>();
+        labels.add(new Label(painter().left() - 5, painter().top() - 2,"|"));
+        labels.add(new Label(painter().left() - 5, painter().top() - 2,""));
+
     }
     public void setEditLimit(int n) {
         editLimit = n;
@@ -60,9 +67,7 @@ public class EditText extends Label implements CommandSolver.KeyListener {
         if(isEditable && editText==""){
             g.setColor(Color.black);
             g.drawString(hintString,painter().left(),painter().top());
-            if(!delay.count()) {
-                g.drawString("|", painter().left() - 5, painter().top() - 2);
-            }
+            labels.get(count).paint(g);
         }else {
             g.setColor(Color.black);
             Font font=new Font("", Font.BOLD,20);
@@ -74,7 +79,9 @@ public class EditText extends Label implements CommandSolver.KeyListener {
 
     @Override
     public void update() {
-
+        if (delay.count()) {
+            count = ++count % labels.size();
+        }
     }
 
     @Override
@@ -101,7 +108,6 @@ public class EditText extends Label implements CommandSolver.KeyListener {
             } else if (!isOverEditLimit() && c >= 65 && c <= 90) {
                 editText = editText + (char) (c + 32);
             }
-            System.out.println(editText);
         }
         ;
     }

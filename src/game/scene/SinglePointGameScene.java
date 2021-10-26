@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SinglePointGameScene extends Scene implements CommandSolver.MouseCommandListener, CommandSolver.KeyListener {
+public class SinglePointGameScene extends Scene implements CommandSolver.MouseCommandListener, CommandSolver.KeyListener, GameOver {
     private ArrayList<GameObject> gameObjectList; //將Game要畫的所有GameObject存起來
 
     private Player mainPlayer;
@@ -54,10 +54,10 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     private Delay propsRemove;
 
     //時間計算
-    private long startTime;
-    private long gameTime;
-    private long chooseTime; //選擇的遊戲時間
-    private long lastTime;
+    private Delay timeDelay = new Delay(60);
+    private int gameTime;
+    private int chooseTime; //選擇的遊戲時間
+    private int lastTime;
     private GameTime printGameTime;
     private Image imgClock;
 
@@ -67,8 +67,8 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     Animation changeBody;
     Animation imgWarning;
     Animation no;//當玩家為獵人時變身格會放
-//    //滑鼠
-//    private Mouse mouse;
+    Animation background321;
+
 
     //提示訊息(畫面上所有的文字處理)
     private ArrayList<Label> labels;
@@ -83,12 +83,29 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     private HashMap<Props.Type, PropsAnimation> allPropsAnimation;
     private Props mainPlayerCollisionProps;
 
+    //暫停
+    private PauseWindow pauseWindow;
+
+    //音樂
+    private String currentSound;
+
+    //321動畫
+    private Label label321;
+
+
+    public SinglePointGameScene() {
+        currentSound = new Path().sound().background().mainscene();
+        pauseWindow = new PauseWindow(currentSound, this);
+    }
+
+
     @Override
     public void sceneBegin() {
-        AudioResourceController.getInstance().loop(new Path().sound().background().mainscene(), -1);
+        AudioResourceController.getInstance().loop(currentSound, -1);
         //遊戲時間
-        startTime = System.nanoTime();
-        chooseTime = 300; //單位：秒
+        timeDelay.play();
+        timeDelay.loop();
+        chooseTime = 154; //單位：秒
         //初始ArrayList
         gameObjectList = new ArrayList<>();
         players = new ArrayList<>();
@@ -139,8 +156,6 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         imgVolcano = SceneController.getInstance().imageController().tryGetImage(new Path().img().background().volcano());
         imgVillage = SceneController.getInstance().imageController().tryGetImage(new Path().img().background().village());
 
-//        //滑鼠
-//        mouse = new Mouse(0, 0, 50, 50);
 
         point = new Point();
         imgPoint = SceneController.getInstance().imageController().tryGetImage(new Path().img().numbers().coin());
@@ -151,20 +166,23 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         //吃到道具的動畫
         objectArr = new ObjectArr();
         allPropsAnimation = objectArr.genPropsAnimation();
+
+        //321動畫
+        background321 = new Animation(AllImages.inputButton);
+        label321 = new Label(Global.SCREEN_X / 2 - 200, Global.SCREEN_Y / 2 + 40, "        3", FontLoader.Future(100));
+
     }
 
 
     @Override
     public void sceneEnd() {
-        CountPointScene countPointScene = new CountPointScene();
-        countPointScene.setPlayerPoint(players);
-        AudioResourceController.getInstance().stop(new Path().sound().background().normalgamebehind30final());
-        SceneController.getInstance().change(countPointScene);
+        AudioResourceController.getInstance().stop(currentSound);
     }
 
     @Override
     public void paint(Graphics g) {//留意畫的順序
-        gameTime = (System.nanoTime() - startTime) / 1000000000;
+
+
         lastTime = chooseTime - gameTime;
         camera.startCamera(g);
         mapPaint(g);
@@ -178,17 +196,35 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
         //顯示遊戲時間
         paintTime(g);
+        //區域關閉前提醒
+        beforeClosdTip(g);
         //顯示警告
         paintWarning(g);
         //顯示積分
         paintPoint(g);
         //顯示技能
         skillPaint(g);
-        //畫滑鼠
-        Global.mouse.paint(g);
         //碰撞道具時播放動畫
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).paint(g);
+        }
+        pauseWindow.paint(g);
+        //畫滑鼠
+        Global.mouse.paint(g);
+
+        if (!isCanMove()) {
+            AudioResourceController.getInstance().play(new Path().sound().background().countdown());
+            background321.paint(0, 0, Global.SCREEN_X, Global.SCREEN_Y, g);
+            if (gameTime == 1) {
+                label321.setWords("        2");
+            }
+            if (gameTime == 2) {
+                label321.setWords("        1");
+            }
+            if (gameTime == 3) {
+                label321.setWords("START");
+            }
+            label321.paint(g);
         }
 
 
@@ -196,7 +232,7 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         smallMap.start(g);
         gameMap.paint(g);
         smallMap.paint(g, mainPlayer, Color.red, 100, 100);//小地圖的需要另外再paint一次
-        if (Global.IS_DEBUG) {
+        if (Global.IS_DEBUG || mainPlayer.isInOutrage) {
             for (int i = 1; i < players.size(); i++) {
                 smallMap.paint(g, players.get(i), Color.YELLOW, 100, 100);
             }
@@ -206,6 +242,15 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
     @Override
     public void update() {
+        if (timeDelay.count()) {
+            gameTime++;
+        }
+        if (!isCanMove()) {
+            return;
+        }
+        if (pauseWindow.isPause()) {
+            return;
+        }
         //區域封閉
         mapAreaClosing();
         //道具生成與更新
@@ -213,6 +258,8 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         allPropsUpdate();
         //為了解決player與npc重疊時 畫面物件顯示先後順序問題
         sortObjectByPosition();
+        //狂暴化效果更新
+        outrageEffect();
         //無法穿越部分物件
         keepNotPass(unPassMapObjects);
         //用forEach將ArrayList中每個gameObject去update()
@@ -230,8 +277,6 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).update();
         }
-
-
     }
 
     @Override
@@ -315,30 +360,32 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
     //顯示剩餘時間動畫
     private void paintTime(Graphics g) {
-        g.drawImage(imgClock,
-                Global.SCREEN_X - 150,
-                -5,
-                60,
-                60,
-                null);
-        g.drawImage(printGameTime.imgHundreds(lastTime),
-                Global.SCREEN_X - 100,
-                10,
-                30,
-                30,
-                null);
-        g.drawImage(printGameTime.imgTens(lastTime),
-                Global.SCREEN_X - 80,
-                10,
-                30,
-                30,
-                null);
-        g.drawImage(printGameTime.imgDigits(lastTime),
-                Global.SCREEN_X - 60,
-                10,
-                30,
-                30,
-                null);
+        if (isCanMove()) {
+            g.drawImage(imgClock,
+                    Global.SCREEN_X - 150,
+                    -5,
+                    60,
+                    60,
+                    null);
+            g.drawImage(printGameTime.imgHundreds(lastTime),
+                    Global.SCREEN_X - 100,
+                    10,
+                    30,
+                    30,
+                    null);
+            g.drawImage(printGameTime.imgTens(lastTime),
+                    Global.SCREEN_X - 80,
+                    10,
+                    30,
+                    30,
+                    null);
+            g.drawImage(printGameTime.imgDigits(lastTime),
+                    Global.SCREEN_X - 60,
+                    10,
+                    30,
+                    30,
+                    null);
+        }
     }
 
     public void mapPaint(Graphics g) {
@@ -375,7 +422,6 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
      */
     public void keepNotPass(ArrayList<? extends GameObject> gameObjects) {
         for (Player player : players) {
-//            player.setNothingBlock(true);
             for (GameObject gameObject : gameObjects) {
                 player.isCollisionForMovement(gameObject);
             }
@@ -410,43 +456,109 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         }
     }
 
+    /**
+     * 隨時間部分區域變成扣分區
+     */
     private void mapAreaClosing() {
-        if (gameTime > 90 && gameTime <= 180) {
-            AudioResourceController.getInstance().stop(new Path().sound().background().mainscene());
-            AudioResourceController.getInstance().play(new Path().sound().background().gameFirst());
-            if (mainPlayer.getPositionType() == Global.MapAreaType.FOREST) {
-                mainPlayer.setInClosedArea(true);
-            } else {
-                mainPlayer.setInClosedArea(false);
+        if (timeDelay.count()) {
+            if (gameTime == 30) {
+                AudioResourceController.getInstance().stop(currentSound);
+                currentSound = new Path().sound().background().gameFirst();
+                AudioResourceController.getInstance().loop(currentSound, -1);
             }
-        } else if (gameTime > 180 && gameTime <= 270) {
-            AudioResourceController.getInstance().stop(new Path().sound().background().gameFirst());
-            AudioResourceController.getInstance().play(new Path().sound().background().normalgamebehind30());
-            if (mainPlayer.getPositionType() == Global.MapAreaType.FOREST ||
-                    mainPlayer.getPositionType() == Global.MapAreaType.ICEFIELD) {
-                mainPlayer.setInClosedArea(true);
-            } else {
-                mainPlayer.setInClosedArea(false);
+            if (gameTime == 70) {
+                AudioResourceController.getInstance().stop(currentSound);
+                currentSound = new Path().sound().background().gamebehind60();
+                AudioResourceController.getInstance().loop(currentSound, -1);
             }
-        } else if (gameTime > 270) {
-            AudioResourceController.getInstance().stop(new Path().sound().background().normalgamebehind30());
-            AudioResourceController.getInstance().play(new Path().sound().background().normalgamebehind30final());
-            if (mainPlayer.getPositionType() != Global.MapAreaType.VILLAGE) {
-                mainPlayer.setInClosedArea(true);
-            } else {
-                mainPlayer.setInClosedArea(false);
+            if (gameTime == 120) {
+                AudioResourceController.getInstance().stop(currentSound);
+                currentSound = new Path().sound().background().normalgamebehind30final();
+                AudioResourceController.getInstance().loop(currentSound, -1);
+            }
+            if (gameTime > 30 && gameTime <= 70) {
+                if (mainPlayer.getPositionType() == Global.MapAreaType.FOREST) {
+                    mainPlayer.setInClosedArea(true);
+                } else {
+                    mainPlayer.setInClosedArea(false);
+                }
+            } else if (gameTime > 70 && gameTime <= 120) {
+                if (mainPlayer.getPositionType() == Global.MapAreaType.FOREST ||
+                        mainPlayer.getPositionType() == Global.MapAreaType.ICEFIELD) {
+                    mainPlayer.setInClosedArea(true);
+                } else {
+                    mainPlayer.setInClosedArea(false);
+                }
+            } else if (gameTime > 120) {
+                if (mainPlayer.getPositionType() != Global.MapAreaType.VILLAGE) {
+                    mainPlayer.setInClosedArea(true);
+                } else {
+                    mainPlayer.setInClosedArea(false);
+                }
             }
         }
     }
 
+    /**
+     * 區域關閉前提醒
+     * @param g 繪圖
+     */
+    private void beforeClosdTip(Graphics g) {
+        if (gameTime > 20 && gameTime < 30) {
+            Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，森林草原區變成扣分區！", FontLoader.cuteChinese(30));
+            labelTip.setColor(Color.BLACK);
+            g.drawImage(point.imgDigits((30 - (int)gameTime) % 10 ),
+                    Global.SCREEN_X / 2 - 180,
+                    50,
+                    30,
+                    30,
+                    null);
+            labelTip.paint(g);
+        } else if (gameTime > 60 && gameTime < 70) {
+            Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，冰原雪地區也變成扣分區！", FontLoader.cuteChinese(30));
+            labelTip.setColor(Color.BLACK);
+            g.drawImage(point.imgDigits((70 - (int)gameTime) % 10 ),
+                    Global.SCREEN_X / 2 - 180,
+                    50,
+                    30,
+                    30,
+                    null);
+            labelTip.paint(g);
+        } else if (gameTime > 110 && gameTime < 120) {
+            Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，荒原紅土區也變成扣分區！", FontLoader.cuteChinese(30));
+            labelTip.setColor(Color.BLACK);
+            g.drawImage(point.imgDigits((120 - (int)gameTime) % 10 ),
+                    Global.SCREEN_X / 2 - 180,
+                    50,
+                    30,
+                    30,
+                    null);
+            labelTip.paint(g);
+        } else if (gameTime > 144 && gameTime < 154){
+            Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，遊戲結束！！！", FontLoader.cuteChinese(30));
+            labelTip.setColor(Color.BLACK);
+            g.drawImage(point.imgDigits((154 - (int)gameTime) % 10 ),
+                    Global.SCREEN_X / 2 - 180,
+                    50,
+                    30,
+                    30,
+                    null);
+            labelTip.paint(g);
+        }
+    }
+
+    /**
+     * 進入扣分區的顯示警示
+     * @param g
+     */
     private void paintWarning(Graphics g) {
         if (mainPlayer.isInClosedArea()) {
             g.setColor(Color.RED);
             imgWarning.paint(
                     Global.SCREEN_X / 2 - 50,
                     100,
-                    120,
-                    50,
+                    80,
+                    80,
                     g);
             g.setColor(Color.BLACK);
         }
@@ -481,22 +593,55 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     }
 
     /**
+     * 獵人狂暴化效果
+     */
+    public void outrageEffect() {
+        if (mainPlayer.startOutrage) {
+            for (int i = 1; i < players.size(); i++) {
+                players.get(i).getMovement().addSpeed(-1);
+            }
+            mainPlayer.startOutrage = false;
+        }
+        if (mainPlayer.outRageTime.count()) {
+            mainPlayer.isInOutrage = false;
+            mainPlayer.getMovement().setSpeed(mainPlayer.getCurrentSpeed());
+        }
+        if (mainPlayer.outRageCD.count()) {
+            mainPlayer.canOutrage = true;
+        }
+    }
+
+    /**
      * 時間到
      */
     public void timeUP() {
-        if (chooseTime == gameTime) {
-            sceneEnd();
+        if (timeDelay.count()) {
+            if (chooseTime <= gameTime) {
+                gameOver();
+            }
         }
     }
 
     @Override
     public void keyPressed(int commandCode, long trigTime) {
-        mainPlayer.keyPressed(commandCode, trigTime);
+        if (isCanMove()) {
+            mainPlayer.keyPressed(commandCode, trigTime);
+        }
     }
 
     @Override
     public void keyReleased(int commandCode, long trigTime) {
-        mainPlayer.keyReleased(commandCode, trigTime);
+        if (isCanMove()) {
+            mainPlayer.keyReleased(commandCode, trigTime);
+            if (commandCode == Global.KeyCommand.ESCAPE.getValue()) {
+                AudioResourceController.getInstance().play(new Path().sound().background().pause());
+                if (!pauseWindow.isPause()) {
+                    pauseWindow.setPause(true);
+                } else {
+                    pauseWindow.setPause(false);
+                }
+            }
+        }
     }
 
     @Override
@@ -506,6 +651,20 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        mainPlayer.mouseTrig(e, state, trigTime, unPassMapObjects, transformObstacles, camera, Global.mouse);
+        if (isCanMove()) {
+            mainPlayer.mouseTrig(e, state, trigTime, unPassMapObjects, transformObstacles, camera, Global.mouse);
+            pauseWindow.mouseTrig(e, state, trigTime);
+        }
+    }
+
+    @Override
+    public void gameOver() {
+        CountPointScene countPointScene = new CountPointScene();
+        countPointScene.setPlayerPoint(players);
+        SceneController.getInstance().change(countPointScene);
+    }
+
+    private boolean isCanMove() {
+        return gameTime > 3;
     }
 }

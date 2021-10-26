@@ -3,6 +3,7 @@ package game.scene;
 ;
 
 import game.Menu.ChooseRoleScene;
+import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
 import game.gameObj.Pact;
@@ -12,6 +13,7 @@ import game.graphic.AllImages;
 import game.map.ObjectArr;
 import game.network.Client.ClientClass;
 import game.utils.GameKernel;
+import game.utils.Path;
 import network.Client.CommandReceiver;
 
 import java.awt.*;
@@ -26,8 +28,6 @@ public class ConnectTool implements GameKernel.GameInterface {
     private ArrayList<Player> mainPlayers;
     private ObjectArr objectArr;
     private boolean isServer;
-//    private ArrayList<MapObject> unPassMapObjects;      連接Scene時，建構子時{set自己角色(new 角色)，加進players}，Scenebegin()，再sent自己創角的訊息出去，server在等人連接的畫面只要一直consume即可。
-//    private ArrayList<TransformObstacle> transformObstacles;
 
     private static ConnectTool ct;
 
@@ -52,6 +52,7 @@ public class ConnectTool implements GameKernel.GameInterface {
     public void createRoom(int port) {
         game.network.Server.Server.instance().create(port);
         game.network.Server.Server.instance().start();
+        isServer = true;
     }
 
     public String[] serverInformation() { //伺服器的資訊
@@ -86,6 +87,11 @@ public class ConnectTool implements GameKernel.GameInterface {
     public void clear() {
         mainPlayer = null;
         mainPlayers = null;
+    }
+
+    public void disconnect() {
+        ClientClass.getInstance().disConnect();
+        isConnect = false;
     }
 
     public void consume() {
@@ -295,12 +301,36 @@ public class ConnectTool implements GameKernel.GameInterface {
                             objectArr.getComputerPlayersConnectPoint().get(Integer.parseInt(strs.get(0))).setXY(Integer.parseInt(strs.get(1)), Integer.parseInt(strs.get(2)));
                             break;
                         case START_GAME:
+                            AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
                             SceneController.getInstance().change(new ConnectPointGameScene());
                             break;
                         case POINT_UPDATE:
                             mainPlayers.forEach(player -> {
+                                if (ClientClass.getInstance().getID() != serialNum) {
+                                    if (player.ID() == serialNum) {
+                                        player.setPoint(Integer.parseInt(strs.get(0)));
+                                    }
+                                }
+                            });
+                            break;
+                        case NOT_MOVE:
+                            mainPlayers.forEach(player -> {
                                 if (player.ID() == Integer.parseInt(strs.get(0))) {
-                                    player.setPoint(Integer.parseInt(strs.get(1)));
+                                    player.translate(Integer.parseInt(strs.get(1)), Integer.parseInt(strs.get(2)));
+                                }
+                            });
+                            break;
+//                        case OUTRAGE:
+//                            mainPlayers.forEach(player -> {
+//                                if (player.ID() == serialNum) {
+//                                    player.outrage();
+//                                }
+//                            });
+//                            break;
+                        case DECREASE_SPEED:
+                            mainPlayers.forEach(player -> {
+                                if (player.ID() != serialNum) {
+                                    player.getMovement().addSpeed(-1);
                                 }
                             });
                             break;
@@ -334,5 +364,9 @@ public class ConnectTool implements GameKernel.GameInterface {
 
     public boolean isServer() {
         return isServer;
+    }
+
+    public boolean isConnect() {
+        return isConnect;
     }
 }

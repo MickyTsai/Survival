@@ -24,9 +24,6 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
     //文字
     private ArrayList<Label> labels;
 
-//    //滑鼠
-//    private Mouse mouse;
-
     //動畫
     ArrayList<Animation> animations;
 
@@ -46,12 +43,11 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
 
         //按鈕
         buttons = new ArrayList<Button>();
-        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 360, 40));
-        buttons.add(new Button(labels.get(2).painter().left(), labels.get(2).painter().top() - 40, 360, 40));
-        buttons.add(new Button(labels.get(3).painter().left(), labels.get(3).painter().top() - 40, 360, 40));
-        buttons.add(new Button(labels.get(4).painter().left(), labels.get(4).painter().top() - 40, 360, 40));
+        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(2).painter().left(), labels.get(2).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(3).painter().left(), labels.get(3).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(4).painter().left(), labels.get(4).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
 
-//        mouse=new Mouse(0,0,50,50);
 
         //動畫
         animations = new ArrayList<>();
@@ -75,11 +71,16 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
         for (int i = 0; i < animations.size(); i++) {
             animations.get(i).paint(Global.SCREEN_X / 4, Global.SCREEN_Y / 4 + i * 100, Global.UNIT_WIDTH * 2, Global.UNIT_HEIGHT * 2, g);
         }
+
+
+        for (int i = 0; i < buttons.size(); i++) {
+            if(Global.mouse.isCollision(buttons.get(i))){
+                buttons.get(i).paint(g);
+            }
+        }
+
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
-        }
-        for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).paint(g);
         }
 
 

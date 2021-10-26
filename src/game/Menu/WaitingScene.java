@@ -9,6 +9,7 @@ import game.graphic.AllImages;
 import game.graphic.Animation;
 import game.graphic.ImgArrAndType;
 import game.network.Client.ClientClass;
+import game.network.Server.Server;
 import game.scene.ConnectPointGameScene;
 import game.scene.ConnectTool;
 import game.scene.Scene;
@@ -19,6 +20,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 
 import static game.gameObj.Pact.*;
 
@@ -45,7 +47,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         y = position.intY();
         if (ConnectTool.instance().isServer()) {
             Player player = new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.HUNTER, this.name);
-            player.getMovement().setSpeed(Global.COMPUTER_SPEED1);
+            player.getMovement().setSpeed(Global.NORMAL_SPEED + 1);
             ConnectTool.instance().setMainPlayer(player);
 
         } else {
@@ -57,18 +59,17 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         backButton = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross));
     }
 
-
     @Override
     public void sceneBegin() {
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
 
         start = new Label(Global.SCREEN_X / 2 + 200, Global.SCREEN_Y / 2 + 180, "START", FontLoader.Blocks(40));
         buttons = new Button(start.collider().right() + 40 + 20, start.collider().bottom(), Global.UNIT_WIDTH * 2 + 30, Global.UNIT_HEIGHT, start);
-
         try {
             ConnectTool.instance().connect(IP, port);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (Exception e) {
+            SceneController.getInstance().change(new MenuScene());
         }
     }
 
@@ -76,7 +77,6 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
     public void sceneEnd() {
         img = null;
         start = null;
-        AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
     }
 
     @Override
@@ -87,11 +87,13 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         }
         number.paint(g);
         for (int i = 0; i < ConnectTool.instance().getMainPlayers().size(); i++) {
-            ConnectTool.instance().getMainPlayers().get(i).getCurrentAnimation().paint(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i, Global.SCREEN_Y / 2, Global.UNIT_WIDTH * 2, Global.UNIT_HEIGHT * 2, g);
+            Player player = ConnectTool.instance().getMainPlayers().get(i);
+            player.getOriginalAnimation().paint(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i, Global.SCREEN_Y / 2, Global.UNIT_WIDTH * 2, Global.UNIT_HEIGHT * 2, g);
+            player.getNameLabel().setXY(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i + 30, Global.SCREEN_Y / 2 - 15);
+            player.getNameLabel().paint(g);
         }
         backButton.paint(g);
         Global.mouse.paint(g);
-
     }
 
     @Override
@@ -101,9 +103,8 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         number.setWords("NUMBER:" + " " + ConnectTool.instance().getMainPlayers().size());
         ConnectTool.instance().consume();
         for (int i = 0; i < ConnectTool.instance().getMainPlayers().size(); i++) {
-            ConnectTool.instance().getMainPlayers().get(i).getCurrentAnimation().update();
+            ConnectTool.instance().getMainPlayers().get(i).getOriginalAnimation().update();
         }
-
     }
 
     @Override
@@ -124,11 +125,23 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         if (state == CommandSolver.MouseState.CLICKED) {
             if (Global.mouse.isCollision(buttons)) {
                 if (ClientClass.getInstance().getID() == 100) {
-                    sceneEnd();
                     ClientClass.getInstance().sent(START_GAME, bale());
                 }
             }
             if (Global.mouse.isCollision(backButton)) {
+                if (!ConnectTool.instance().isConnect()) {
+                    SceneController.getInstance().change(new MenuScene());
+                    ConnectTool.reset();
+                    return;
+                }
+                if (ClientClass.getInstance().getID() == 100) {
+                    ConnectTool.instance().disconnect();
+                    Server.instance().close();
+                    ConnectTool.reset();
+                } else {
+                    ConnectTool.instance().disconnect();
+                    ConnectTool.reset();
+                }
                 SceneController.getInstance().change(new MenuScene());
             }
         }
@@ -138,13 +151,21 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         int number = Global.random(1, 4);
         switch (number) {
             case 1:
-                return new Position(1700, 300);
+                return new Position(1680, 2850);
             case 2:
-                return new Position(2100, 789);
+                return new Position(3000, 3000);
             case 3:
+                return new Position(200, 2288);
+            case 4:
+                return new Position(1700, 300);
+            case 5:
+                return new Position(2100, 789);
+            case 6:
                 return new Position(980, 2500);
-            default:
+            case 7:
                 return new Position(2634, 2718);
+            default:
+                return new Position(250, 300);
         }
     }
 }

@@ -2,6 +2,8 @@ package game.Menu;
 
 import game.controllers.SceneController;
 import game.core.Global;
+import game.graphic.AllImages;
+import game.graphic.Animation;
 import game.scene.Scene;
 import game.utils.CommandSolver;
 import game.utils.Path;
@@ -23,8 +25,6 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
     //輸入文字
     private ArrayList<EditText> editTexts;
 
-//    //滑鼠
-//    private Mouse mouse;
 
 
     @Override
@@ -34,11 +34,11 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
 
         //按鈕
         buttons = new ArrayList<Button>();
-        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4, 360, 70));
-        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70));
-        buttons.add(new Button(buttons.get(1).painter().left(), buttons.get(1).painter().bottom() + 40, 360, 70));
-        buttons.add(new Button(buttons.get(2).painter().left() - 30, buttons.get(2).painter().bottom() + 40, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2));
-        buttons.add(new Button(buttons.get(3).painter().right() + 50, buttons.get(3).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2));
+        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4, 360, 70,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(1).painter().left(), buttons.get(1).painter().bottom() + 40, 360, 70,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(2).painter().left() - 30, buttons.get(2).painter().bottom() + 40, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(3).painter().right() + 50, buttons.get(3).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
 
         //文字
         labels = new ArrayList<Label>();
@@ -54,7 +54,7 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
         editTexts.add(new EditText(buttons.get(1).collider().left() + 10, buttons.get(1).collider().top() + 45, "IP"));
         editTexts.add(new EditText(buttons.get(2).collider().left() + 10, buttons.get(2).collider().top() + 45, "PORT"));
 
-//        mouse=new Mouse(0,0,50,50);
+
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
         img = null;
         labels = null;
         editTexts = null;
-//        mouse=null;
+
     }
 
     @Override
@@ -88,7 +88,10 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
 
     @Override
     public void update() {
+        for (int i = 0; i < editTexts.size(); i++) {
+            editTexts.get(i).update();
 
+        }
     }
 
     @Override
@@ -108,7 +111,8 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
         }
         if (state == CommandSolver.MouseState.CLICKED) {
             if (Global.mouse.isCollision(buttons.get(4))) {
-                if (getPlayerName() == null || getIp() == null || getPort() == null) {
+                if (inputError()) {
+                    labels.add(new Label(buttons.get(3).collider().left() -20, buttons.get(2).collider().bottom() + 30, " Please Enter Correct Information ", FontLoader.Future(20)));
                     return;
                 }
                 SceneController.getInstance().change(new ChooseRoleScene(getIp(), getPlayerName(), Integer.parseInt(getPort())));
@@ -167,5 +171,8 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
 
     public String getPort() {
         return editTexts.get(2).getEditText();
+    }
+    public boolean inputError(){
+        return getPlayerName() == "" || getIp() == "" || getPort() == "";
     }
 }

@@ -43,4 +43,8 @@ public class Label extends GameObject {
     public void setWords(String words) {
         this.words = words;
     }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 }

@@ -2,6 +2,8 @@ package game.Menu;
 
 import game.controllers.SceneController;
 import game.core.Global;
+import game.graphic.AllImages;
+import game.graphic.Animation;
 import game.scene.ConnectTool;
 import game.scene.Scene;
 import game.utils.CommandSolver;
@@ -24,8 +26,7 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
     //輸入文字
     private ArrayList<EditText> editTexts;
 
-//    //滑鼠
-//    private Mouse mouse;
+
 
 
     @Override
@@ -35,10 +36,10 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
 
         //按鈕
         buttons = new ArrayList<Button>();
-        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4 + 50, 360, 70));
-        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70));
-        buttons.add(new Button(buttons.get(0).painter().left() - 30, buttons.get(1).painter().bottom() + 50, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2));
-        buttons.add(new Button(buttons.get(2).painter().right() + 50, buttons.get(2).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2));
+        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4 + 50, 360, 70,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(0).painter().left() - 30, buttons.get(1).painter().bottom() + 50, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(2).painter().right() + 50, buttons.get(2).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
 
         //文字
         labels = new ArrayList<Label>();
@@ -51,8 +52,6 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
         editTexts = new ArrayList<EditText>();
         editTexts.add(new EditText(buttons.get(0).collider().left() + 10, buttons.get(0).collider().top() + 45, "NAME"));
         editTexts.add(new EditText(buttons.get(1).collider().left() + 10, buttons.get(1).collider().top() + 45, "PORT"));
-
-//        mouse=new Mouse(0,0,50,50);
 
     }
 
@@ -84,6 +83,9 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
     @Override
     public void update() {
 
+        for (int i = 0; i < editTexts.size(); i++) {
+            editTexts.get(i).update();
+        }
     }
 
     @Override
@@ -103,7 +105,8 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
         }
         if (state == CommandSolver.MouseState.CLICKED) {
             if (Global.mouse.isCollision(buttons.get(3))) {
-                if (getPlayerName() == null || getPort() == null) {
+                if (inputError()) {
+                    labels.add(new Label(buttons.get(2).collider().left() -20, buttons.get(1).collider().bottom() + 30, " Please Enter Correct Information ", FontLoader.Future(20)));
                     return;
                 }
                 SceneController.getInstance().change(new ChooseRoleScene("127.0.0.1", getPlayerName(), Integer.parseInt(getPort())));
@@ -151,5 +154,8 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
 
     public String getPort() {
         return editTexts.get(1).getEditText();
+    }
+    public boolean inputError(){
+        return getPlayerName() == "" || getPort() == "";
     }
 }

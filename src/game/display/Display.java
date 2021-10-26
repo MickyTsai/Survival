@@ -30,7 +30,8 @@ public class Display extends JFrame {
                 {KeyEvent.VK_S, Global.KeyCommand.DOWN.getValue()},
                 {KeyEvent.VK_D, Global.KeyCommand.RIGHT.getValue()},
                 {KeyEvent.VK_R, Global.KeyCommand.TRANSFORM.getValue()},
-                {KeyEvent.VK_F, Global.KeyCommand.TELEPORTATION.getValue()}
+                {KeyEvent.VK_F, Global.KeyCommand.TELEPORTATION.getValue()},
+                {KeyEvent.VK_ESCAPE, Global.KeyCommand.ESCAPE.getValue()}
         };
 
 

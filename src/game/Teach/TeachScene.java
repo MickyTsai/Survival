@@ -2,6 +2,7 @@ package game.Teach;
 
 
 import game.Menu.*;
+import game.Menu.Button;
 import game.Menu.Label;
 import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
@@ -48,10 +49,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     private Delay labelTime;
 
 
-    //關閉的區域（在裡面扣分）
-    private boolean inclosedArea;
-
-
     //左下角的方格
     Animation runnerLight;
     Animation runnerDark;
@@ -59,8 +56,8 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     Animation changeBody;
     Animation imgWarning;
     Animation no;//當玩家為獵人時變身格會放
-//    //滑鼠
-//    private Mouse mouse;
+    Animation teach;//點擊物件變身
+
 
     //提示訊息(畫面上所有的文字處理)
     private ArrayList<Label> labels;
@@ -72,9 +69,9 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     private Boolean firstProps;
     private Boolean firstCongratulations;
 
-    private Image img;
     private Animation button;
-
+    private game.Menu.Button backButton;
+    private ArrayList<Button> buttons;
     @Override
     public void sceneBegin() {
         AudioResourceController.getInstance().play(new Path().sound().background().gameFirst());
@@ -82,9 +79,10 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         transformObstacles = new ArrayList<>();
         players = new ArrayList<>();
         labels = new ArrayList<Label>();
-        teachStrings=new ArrayList<>();
+        teachStrings = new ArrayList<>();
         propsArrayList = new ArrayList<Props>();
-        labelTime=new Delay(120);
+        buttons=new ArrayList<>();
+        labelTime = new Delay(120);
 
 
         //先將要畫的物件初始
@@ -102,42 +100,48 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         imgForest = SceneController.getInstance().imageController().tryGetImage(new Path().img().background().forest());
         setLabels();
         setAnimation();
-        teachCount=0;
+        teachCount = 0;
 
-//        mouse = new Mouse(0, 0, 50, 50);
-        firstBee=true;
-        firstProps=true;
-        firstCongratulations=true;
-        button=new Animation(AllImages.button1);
+        firstBee = true;
+        firstProps = true;
+        firstCongratulations = true;
+        button = new Animation(AllImages.inputButton);
+
+        labels.add(new Label(100,80,"NEXT",FontLoader.Blocks(50)));
+        buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross)));
+        buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(3).collider().left()-10,labels.get(3).collider().bottom()-50,160,60,new Animation(AllImages.inputButton)));
+        teach = new Animation(AllImages.teach1);
+
     }
 
 
     @Override
     public void sceneEnd() {
-        this.gameObjectList=null; //將Game要畫的所有GameObject存起來
-        this.propsArrayList=null;
-        this.mainPlayer=null;
-        this.players=null;
-        this.transformObstacles=null;
-        this.unPassMapObjects=null;
-        this.camera=null;
-        this.gameMap=null;
-        this.imgForest=null;
-        this.propsReProduce=null;
-        this.propsRemove=null;
-        this.labelTime=null;
-        this.runnerLight=null;
-        this.runnerDark=null;
-        this.runnerNormal=null;
-        this.changeBody=null;
-        this.imgWarning=null;
-        this.no=null;
-        this.labels=null;
-        this.teachLabel=null;
-        this.teachStrings=null;
-        this.firstBee=null;
-        this.firstProps=null;
-        this.firstCongratulations=null;
+        this.gameObjectList = null; //將Game要畫的所有GameObject存起來
+        this.propsArrayList = null;
+        this.mainPlayer = null;
+        this.players = null;
+        this.transformObstacles = null;
+        this.unPassMapObjects = null;
+        this.camera = null;
+        this.gameMap = null;
+        this.imgForest = null;
+        this.propsReProduce = null;
+        this.propsRemove = null;
+        this.labelTime = null;
+        this.runnerLight = null;
+        this.runnerDark = null;
+        this.runnerNormal = null;
+        this.changeBody = null;
+        this.imgWarning = null;
+        this.no = null;
+        this.labels = null;
+        this.teachLabel = null;
+        this.teachStrings = null;
+        this.firstBee = null;
+        this.firstProps = null;
+        this.firstCongratulations = null;
         AudioResourceController.getInstance().stop(new Path().sound().background().gameFirst());
     }
 
@@ -150,14 +154,32 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         gameObjectList.forEach(gameObject -> gameObject.paint(g));
         propsPaint(g);
 
-        button.paint(0,Global.SCREEN_Y-100,Global.SCREEN_X,100,g);
+        button.paint(0, Global.SCREEN_Y - 100, Global.SCREEN_X, 100, g);
+
+        for (int i=0;i<buttons.size();i++){
+            if (i==1 ){
+                if(buttons.get(1).isCollision(Global.mouse)){
+                    buttons.get(1).paint(g);
+                }
+            }else if (i==2){
+                if(buttons.get(2).isCollision(Global.mouse)) {
+                    buttons.get(2).paint(g);
+                }
+            }else {
+                buttons.get(i).paint(g);
+            }
+        }
+
+
+
+
         //判斷有沒有道具
         if (!mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation()) {
-            runnerDark.paint(Global.RUNNER_X, Global.RUNNER_Y-100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
+            runnerDark.paint(Global.RUNNER_X, Global.RUNNER_Y - 100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
         } else if (mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation()) {
-            runnerNormal.paint(Global.RUNNER_X, Global.RUNNER_Y-100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
+            runnerNormal.paint(Global.RUNNER_X, Global.RUNNER_Y - 100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
         } else {
-            runnerLight.paint(Global.RUNNER_X, Global.RUNNER_Y-100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
+            runnerLight.paint(Global.RUNNER_X, Global.RUNNER_Y - 100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
         }
 
         //變身格
@@ -171,6 +193,18 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
+        }
+
+        if (teachCount > 1 && teachCount <= 3) {
+            teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
+        }
+        if (teachCount > 4 && teachCount <= 8) {
+            teach.setImg(AllImages.teach2);
+            teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
+        }
+        if (teachCount > 10 && teachCount < 16) {
+            teach.setImg(AllImages.teach3);
+            teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
         }
 
         teachLabel.paint(g);
@@ -197,31 +231,31 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         camera.update();
         labels.get(2).setWords(String.valueOf(mainPlayer.transformCDTime()));
 
-        if(teachLabel!=null){
-            if(labelTime.count() && teachCount<teachStrings.size()-1){
+        if (teachLabel != null) {
+            if (labelTime.count() && teachCount < teachStrings.size() - 1) {
                 teachCount++;
                 teachLabel.setWords(teachStrings.get(teachCount));
             }
         }
 
 
-        if(mainPlayer.roleState== Player.RoleState.PREY && firstBee){
-            if(labelTime.count()){
+        if (mainPlayer.roleState == Player.RoleState.PREY && firstBee) {
+            if (labelTime.count()) {
                 produceBee();
-                firstBee=false;
+                firstBee = false;
             }
         }
-        if(mainPlayer.getCurrentAnimation().getImg()==AllImages.bee && firstProps){
-            if(labelTime.count()) {
+        if (mainPlayer.getCurrentAnimation().getImg() == AllImages.bee && firstProps) {
+            if (labelTime.count()) {
                 firstProps = false;
                 produceProps();
             }
         }
-        if(mainPlayer.isCanUseTeleportation() && mainPlayer.isUseTeleportation() && firstCongratulations){
-            firstCongratulations=false;
+        if (mainPlayer.isCanUseTeleportation() && mainPlayer.isUseTeleportation() && firstCongratulations) {
+            firstCongratulations = false;
             produceCongratulations();
         }
-        if(firstCongratulations==false && teachCount==teachStrings.size()-1){
+        if (firstCongratulations == false && teachCount == teachStrings.size() - 1) {
             SceneController.getInstance().change(new MenuScene());
         }
 
@@ -268,8 +302,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     }
 
 
-
-
     /**
      * 讓角色無法穿過該物件
      */
@@ -306,11 +338,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
             }
         }
     }
-
-
-
-
-
 
 
     /**
@@ -357,18 +384,24 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
                 }
             }
             mainPlayer.useTeleportation(mouseX, mouseY);
+            if (Global.mouse.isCollision(buttons.get(0))) {
+                SceneController.getInstance().change(new MenuScene());
+            }
+            if (Global.mouse.isCollision(buttons.get(2))) {
+                SceneController.getInstance().change(new SurvivalPropsRuleScene());
+            }
         }
         Global.mouse.mouseTrig(e, state, trigTime);
     }
 
     public void setLabels() {
-        labels.add(new Label(Global.RUNNER_X + 75, Global.RUNNER_Y + 85-100, "F", FontLoader.Future(20)));
-        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 75, Global.RUNNER_Y + 85-100, "R", FontLoader.Future(20)));
-        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30-100, String.valueOf(mainPlayer.transformCDTime()), FontLoader.Future(20)));
+        labels.add(new Label(Global.RUNNER_X + 75, Global.RUNNER_Y + 85 - 100, "F", FontLoader.Future(20)));
+        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 75, Global.RUNNER_Y + 85 - 100, "R", FontLoader.Future(20)));
+        labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30 - 100, String.valueOf(mainPlayer.transformCDTime()), FontLoader.Future(20)));
 
     }
 
-    public void setAnimation(){
+    public void setAnimation() {
         runnerDark = new Animation(AllImages.runnerDark);
         runnerLight = new Animation(AllImages.runnerLight);
         runnerNormal = new Animation(AllImages.runnerNormal);
@@ -380,48 +413,54 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
     /**
      * 先有玩家
-     * */
-    private void producePlayer(){
-        mainPlayer = new TeachPlayer(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.beige, Player.RoleState.HUNTER, Global.SCREEN_X, Global.SCREEN_Y-100);
+     */
+    private void producePlayer() {
+        mainPlayer = new TeachPlayer(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.beige, Player.RoleState.HUNTER, Global.SCREEN_X, Global.SCREEN_Y - 100);
         players.add(mainPlayer);
         players.add(new TeachComputerPlayer(500, 500, AllImages.blue, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y));
         teachStrings.add("");
-        teachStrings.add("      使用鍵盤WASD上下移動       ");
-        teachStrings.add("當身分為HUNTER時左下角格子出現叉叉");
-        teachStrings.add("     請試著追捕其他角色獲取積分並交換身分        ");
+        //擊因為字體沒有因此不會出現，故用來抓區間使用
+        teachStrings.add("   擊擊擊使用鍵盤WASD上下移動擊擊擊");
+        teachStrings.add("   當身分為獵人時左下角格子出現叉叉擊");
+        teachStrings.add("   請試著追捕其他獵物獲取積分並交換身分");
 
 
         labelTime.play();
         labelTime.loop();
-        teachLabel=new Label(Global.SCREEN_X/4-100,Global.SCREEN_Y-40,teachStrings.get(0),FontLoader.dotChinese(40));
+        teachLabel = new Label(Global.SCREEN_X / 4 - 100, Global.SCREEN_Y - 40, teachStrings.get(0), FontLoader.cuteChinese(40));
     }
-    private void produceBee(){
+
+    private void produceBee() {
         teachStrings.add("");
-        teachStrings.add("             身分為普通玩家        ");
-        teachStrings.add("     即可使用魔法棒click物件        ");
-        teachStrings.add("     並按R成為該物件hide在map中        ");
+        teachStrings.add("    擊擊擊身分為普通玩家擊擊擊擊擊擊擊");
+        teachStrings.add("    擊擊即可使用魔法棒點選物件擊擊擊");
+        teachStrings.add("    擊並按R變身成為該物隱身在地圖中擊");
+        teachStrings.add("    擊擊擊試著尋找蜜蜂並變身吧!!!擊擊");
 
         transformObstacles.add(new MovingObstacle(800, 300, AllImages.bee));
         transformObstacles.forEach(transformObstacle -> gameObjectList.addAll(List.of(transformObstacle)));
 
     }
-    private void produceProps(){
-        teachStrings.add("");
-        teachStrings.add("          map出現random道具        ");
-        teachStrings.add("           請touch道具        ");
-        teachStrings.add("        當道具為瞬間移動時        ");
-        teachStrings.add("          左下方格則亮起        ");
-        teachStrings.add("     按F並click地上任一點即可順移        ");
 
-        propsArrayList.add(new Props(Global.SCREEN_X / 2, Global.SCREEN_Y / 2 - 100,Props.Type.teleportation));
-        propsArrayList.add(new Props( Global.SCREEN_X / 3 - 100, Global.SCREEN_Y / 3 - 100,Props.Type.teleportation));
-    }
-    private void produceCongratulations(){
+    private void produceProps() {
         teachStrings.add("");
-        teachStrings.add("            恭喜~已具備基本技能        ");
-        teachStrings.add("            可以到遊戲模式遊玩囉        ");
+        teachStrings.add("    擊擊地圖將會隨機出現道具擊擊擊");
+        teachStrings.add("    擊擊擊擊請拾取道具擊擊擊擊擊擊");
+        teachStrings.add("    擊擊當道具為瞬間移動時擊擊擊擊");
+        teachStrings.add("    擊擊擊左下方格則亮起擊擊擊擊擊");
+        teachStrings.add("    擊擊按F並點選地上任一點即可順移擊");
+
+        propsArrayList.add(new Props(Global.SCREEN_X / 2, Global.SCREEN_Y / 2 - 100, Props.Type.teleportation));
+        propsArrayList.add(new Props(Global.SCREEN_X / 3 - 100, Global.SCREEN_Y / 3 - 100, Props.Type.teleportation));
+    }
+
+    private void produceCongratulations() {
+        teachStrings.add("");
+        teachStrings.add("    擊擊恭喜~已具備基本技能擊擊擊");
+        teachStrings.add("    擊擊可以到遊戲模式遊玩囉擊擊擊");
         teachStrings.add("");
     }
+
 
 }
 

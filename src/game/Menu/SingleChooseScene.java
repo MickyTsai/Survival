@@ -1,5 +1,9 @@
 package game.Menu;
 
+import game.Teach.SurvivalPropsRuleScene;
+import game.Teach.TeachPointGameScene;
+import game.Teach.TeachScene;
+import game.Teach.TeachSurvivalGameScene;
 import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
@@ -7,7 +11,6 @@ import game.graphic.AllImages;
 import game.graphic.Animation;
 import game.scene.Scene;
 import game.scene.SinglePointGameScene;
-import game.scene.SingleSurvivalGameScene;
 import game.utils.CommandSolver;
 import game.utils.Path;
 
@@ -25,8 +28,7 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
     //文字
     private ArrayList<Label> labels;
 
-//    //滑鼠
-//    private Mouse mouse;
+
 
     //動畫
     ArrayList<Animation> animations;
@@ -47,8 +49,11 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         buttons.add(new Button(labels.get(0).painter().left(), labels.get(0).painter().top() - 40, 380, 40));
         buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 380, 40));
         buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT));
+        buttons.add(new Button(labels.get(0).painter().left(), labels.get(0).painter().top() - 40, 380, 40,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 380, 40,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT,new Animation(AllImages.inputButton)));
 
-//        mouse=new Mouse(0,0,50,50);
+
 
         //動畫
         animations = new ArrayList<>();
@@ -77,7 +82,23 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         animations.get(2).paint(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
 
         for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).paint(g);
+            if(i==3){
+                if(Global.mouse.isCollision(buttons.get(i))){
+                    buttons.get(i).paint(g);
+                }
+
+            }else if(i==4){
+                if(Global.mouse.isCollision(buttons.get(i))){
+                    buttons.get(i).paint(g);
+                }
+            }else if(i==5){
+                if(Global.mouse.isCollision(buttons.get(i))){
+                    buttons.get(i).paint(g);
+                }
+            }else {
+                buttons.get(i).paint(g);
+            }
+
         }
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
@@ -113,14 +134,13 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         }
         if (state == CommandSolver.MouseState.CLICKED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
-                sceneEnd();
-                SceneController.getInstance().change(new SinglePointGameScene());
+                SceneController.getInstance().change(new TeachPointGameScene());
             }
             if (Global.mouse.isCollision(buttons.get(1))) {
-                sceneEnd();
-                SceneController.getInstance().change(new SingleSurvivalGameScene());
+                SceneController.getInstance().change(new TeachSurvivalGameScene());
             }
             if (Global.mouse.isCollision(buttons.get(2))) {
+                AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
 
