@@ -105,7 +105,6 @@ public class SurvivalPropsRuleScene extends Scene implements CommandSolver.Mouse
             labels.get(i).paint(g);
         }
 
-
         Global.mouse.paint(g);
     }
 
@@ -128,7 +127,7 @@ public class SurvivalPropsRuleScene extends Scene implements CommandSolver.Mouse
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 SceneController.getInstance().change(new MenuScene());
             }

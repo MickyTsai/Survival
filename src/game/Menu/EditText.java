@@ -19,6 +19,7 @@ public class EditText extends Label implements CommandSolver.KeyListener {
     private int size;
     ArrayList <Label> labels;
     private int count;
+    private int inter;
 
 
     public EditText(int x, int y,String hintString) {
@@ -31,9 +32,9 @@ public class EditText extends Label implements CommandSolver.KeyListener {
         editText="";
         count=0;
         labels=new ArrayList<>();
-        labels.add(new Label(painter().left() - 5, painter().top() - 2,"|"));
-        labels.add(new Label(painter().left() - 5, painter().top() - 2,""));
-
+        labels.add(new Label(painter().left() - 5, painter().top() - 2,"|",Color.BLACK));
+        labels.add(new Label(painter().left() - 5, painter().top() - 2," "));
+        inter=5;
     }
     public void setEditLimit(int n) {
         editLimit = n;
@@ -66,14 +67,21 @@ public class EditText extends Label implements CommandSolver.KeyListener {
     public void paintComponent(Graphics g) {
         if(isEditable && editText==""){
             g.setColor(Color.black);
-            g.drawString(hintString,painter().left(),painter().top());
-            labels.get(count).paint(g);
+            g.drawString(labels.get(count).toString()+hintString,painter().left(),painter().top());
+
         }else {
             g.setColor(Color.black);
             Font font=new Font("", Font.BOLD,20);
             g.setFont(font);
             g.drawString(editText,painter().left(),painter().top());
         }
+        if(isEditable && editText!=""){
+            g.setColor(Color.black);
+            Font font=new Font("", Font.BOLD,20);
+            g.setFont(font);
+            g.drawString(editText+labels.get(count).toString(),painter().left(),painter().top());
+        }
+
     }
 
 
@@ -82,6 +90,7 @@ public class EditText extends Label implements CommandSolver.KeyListener {
         if (delay.count()) {
             count = ++count % labels.size();
         }
+
     }
 
     @Override
@@ -121,5 +130,6 @@ public class EditText extends Label implements CommandSolver.KeyListener {
     public String getEditText(){
         return editText;
     }
+
 
 }

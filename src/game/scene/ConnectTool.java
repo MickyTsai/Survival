@@ -119,11 +119,7 @@ public class ConnectTool implements GameKernel.GameInterface {
                             }
                             if (!isburn) {
                                 Player newPlayer;
-                                if (serialNum == 100) {
-                                    newPlayer = new Player(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(2))), Player.RoleState.HUNTER, strs.get(3));
-                                } else {
-                                    newPlayer = new Player(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(2))), Player.RoleState.PREY, strs.get(3));
-                                }
+                                newPlayer = new Player(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), ChooseRoleScene.imgArrAndTypeParseInt(Integer.parseInt(strs.get(2))), Player.RoleState.PREY, strs.get(3));
                                 newPlayer.setID(serialNum);
                                 mainPlayers.add(newPlayer);
                                 ClientClass.getInstance().sent(CONNECT, bale(strs.get(0), strs.get(1)));
@@ -200,14 +196,14 @@ public class ConnectTool implements GameKernel.GameInterface {
                         case TRANSFORM:
                             mainPlayers.forEach(player -> {
                                 if (serialNum == player.ID()) {
-                                    player.keyPressed(Global.KeyCommand.TRANSFORM.getValue(), Long.parseLong(strs.get(0)));
+                                    player.keyReleased(Global.KeyCommand.TRANSFORM.getValue(), Long.parseLong(strs.get(0)));
                                 }
                             });
                             break;
                         case TELEPORTATION:
                             mainPlayers.forEach(player -> {
                                 if (serialNum == player.ID()) {
-                                    player.keyPressed(Global.KeyCommand.TELEPORTATION.getValue(), Long.parseLong(strs.get(0)));
+                                    player.keyReleased(Global.KeyCommand.TELEPORTATION.getValue(), Long.parseLong(strs.get(0)));
                                 }
                             });
                             break;
@@ -232,6 +228,7 @@ public class ConnectTool implements GameKernel.GameInterface {
                             for (Player player : mainPlayers) {
                                 if (player.ID() == Integer.parseInt(strs.get(0))) {
                                     player1 = player;
+                                    continue;
                                 }
                                 if (player.ID() == Integer.parseInt(strs.get(1))) {
                                     player2 = player;
@@ -330,7 +327,18 @@ public class ConnectTool implements GameKernel.GameInterface {
                         case DECREASE_SPEED:
                             mainPlayers.forEach(player -> {
                                 if (player.ID() != serialNum) {
-                                    player.getMovement().addSpeed(-1);
+                                    if (player.getMovement().getSpeed() > Global.SPEED_MIN) {
+                                        player.getMovement().addSpeed(-1);
+                                    }
+                                }
+                            });
+                            break;
+                        case RANDOM_HUNTER:
+                            mainPlayers.forEach(player -> {
+                                if (player.ID() == Integer.parseInt(strs.get(0))) {
+                                    player.roleState = Player.RoleState.HUNTER;
+                                    player.setRoleStateBeforeBump(Player.RoleState.HUNTER);
+                                    player.animationUpdate();
                                 }
                             });
                             break;

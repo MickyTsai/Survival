@@ -98,8 +98,10 @@ public class Global {
     public static final int NORMAL_SPEED = 3;
     public static final int COMPUTER_SPEED1 = 2;
     public static final int COMPUTER_SPEED2 = 3;
-    public static final int COMPUTER_SPEED3 = 4;
-    public static final int COMPUTER_SPEED4 = 5;
+    public static final int COMPUTER_SPEED3 = 3;
+    public static final int COMPUTER_SPEED4 = 4;
+    public static final int SPEED_MIN = 2;
+
 
     //電腦追蹤移動獵物範圍
     public static final int COMPUTER_CHASE_DISTANCE1 = 300;
@@ -150,7 +152,9 @@ public class Global {
                     new Path().img().actors().bump().Bump4()),
             SceneController.getInstance().imageController().tryGetImage(
                     new Path().img().actors().bump().Bump5())));
+
     public static Mouse mouse = new Mouse(0, 0, 50, 50);
+
 
 
     /**

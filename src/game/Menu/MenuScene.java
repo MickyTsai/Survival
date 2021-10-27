@@ -31,7 +31,7 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
     public void sceneBegin() {
         //主選單背景圖
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
-        AudioResourceController.getInstance().play(new Path().sound().background().lovelyflower());
+        AudioResourceController.getInstance().loop(new Path().sound().background().lovelyflower(), -1);
 
         //文字
         labels = new ArrayList<Label>();
@@ -43,10 +43,10 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
 
         //按鈕
         buttons = new ArrayList<Button>();
-        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(labels.get(2).painter().left(), labels.get(2).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(labels.get(3).painter().left(), labels.get(3).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(labels.get(4).painter().left(), labels.get(4).painter().top() - 45, 360, 50,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(1).painter().left() - 5, labels.get(1).painter().top() - 45, 370, 50, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(2).painter().left() - 5, labels.get(2).painter().top() - 45, 370, 50, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(3).painter().left() - 5, labels.get(3).painter().top() - 45, 370, 50, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(4).painter().left() - 5, labels.get(4).painter().top() - 45, 370, 50, new Animation(AllImages.inputButton)));
 
 
         //動畫
@@ -74,7 +74,7 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
 
 
         for (int i = 0; i < buttons.size(); i++) {
-            if(Global.mouse.isCollision(buttons.get(i))){
+            if (Global.mouse.isCollision(buttons.get(i))) {
                 buttons.get(i).paint(g);
             }
         }
@@ -109,7 +109,7 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 SceneController.getInstance().change(new SingleChooseScene());
             }
@@ -120,8 +120,7 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
                 SceneController.getInstance().change(new ConnectRoomScene());
             }
             if (Global.mouse.isCollision(buttons.get(3))) {
-                sceneEnd();
-                AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new TeachScene());
             }
         }

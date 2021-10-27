@@ -1,5 +1,6 @@
 package game.Menu;
 
+import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
 import game.graphic.AllImages;
@@ -26,7 +27,6 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
     private ArrayList<EditText> editTexts;
 
 
-
     @Override
     public void sceneBegin() {
         //主選單背景圖
@@ -34,11 +34,11 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
 
         //按鈕
         buttons = new ArrayList<Button>();
-        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4, 360, 70,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(buttons.get(1).painter().left(), buttons.get(1).painter().bottom() + 40, 360, 70,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(buttons.get(2).painter().left() - 30, buttons.get(2).painter().bottom() + 40, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(buttons.get(3).painter().right() + 50, buttons.get(3).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(Global.SCREEN_X / 3 - 50, Global.SCREEN_Y / 4, 360, 70, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(0).painter().left(), buttons.get(0).painter().bottom() + 40, 360, 70, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(1).painter().left(), buttons.get(1).painter().bottom() + 40, 360, 70, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(2).painter().left() - 30, buttons.get(2).painter().bottom() + 40, buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(buttons.get(3).painter().right() + 50, buttons.get(3).painter().top(), buttons.get(0).painter().width() / 2, buttons.get(0).painter().height() / 2, new Animation(AllImages.inputButton)));
 
         //文字
         labels = new ArrayList<Label>();
@@ -51,6 +51,7 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
         //輸入文字
         editTexts = new ArrayList<EditText>();
         editTexts.add(new EditText(buttons.get(0).collider().left() + 10, buttons.get(0).collider().top() + 45, "NAME"));
+        editTexts.get(0).setEditLimit(6);
         editTexts.add(new EditText(buttons.get(1).collider().left() + 10, buttons.get(1).collider().top() + 45, "IP"));
         editTexts.add(new EditText(buttons.get(2).collider().left() + 10, buttons.get(2).collider().top() + 45, "PORT"));
 
@@ -109,15 +110,16 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(4))) {
                 if (inputError()) {
-                    labels.add(new Label(buttons.get(3).collider().left() -20, buttons.get(2).collider().bottom() + 30, " Please Enter Correct Information ", FontLoader.Future(20)));
+                    labels.add(new Label(buttons.get(3).collider().left() - 20, buttons.get(2).collider().bottom() + 30, " Please Enter Correct Information ", FontLoader.Future(20)));
                     return;
                 }
                 SceneController.getInstance().change(new ChooseRoleScene(getIp(), getPlayerName(), Integer.parseInt(getPort())));
             }
             if (Global.mouse.isCollision(buttons.get(3))) {
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
             if (Global.mouse.isCollision(buttons.get(0))) {
@@ -172,7 +174,8 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
     public String getPort() {
         return editTexts.get(2).getEditText();
     }
-    public boolean inputError(){
+
+    public boolean inputError() {
         return getPlayerName() == "" || getIp() == "" || getPort() == "";
     }
 }

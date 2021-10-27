@@ -335,4 +335,17 @@ public class AllImages {
     public static ImgArrAndType teach3 = new ImgArrAndType(new ArrayList<>(java.util.List.of(
             SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().Elements().element3()))), Global.MapAreaType.NONE);
 
+    //傳送動畫
+    public static ImgArrAndType teleAnimation = new ImgArrAndType(new ArrayList<>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().tele_1()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().tele_2()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().tele_3()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().tele_4()))), Global.MapAreaType.NONE);
+
+    //狂暴動畫
+    public static ImgArrAndType outrage = new ImgArrAndType(new ArrayList<>(java.util.List.of(
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().outrage_1()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().outrage_2()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().outrage_3()),
+            SceneController.getInstance().imageController().tryGetImage(new Path().img().objs().move().outrage_4()))), Global.MapAreaType.NONE);
 }

@@ -1,5 +1,6 @@
 package game.Menu;
 
+import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
 import game.graphic.AllImages;
@@ -51,6 +52,7 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
         //輸入文字
         editTexts = new ArrayList<EditText>();
         editTexts.add(new EditText(buttons.get(0).collider().left() + 10, buttons.get(0).collider().top() + 45, "NAME"));
+        editTexts.get(0).setEditLimit(6);
         editTexts.add(new EditText(buttons.get(1).collider().left() + 10, buttons.get(1).collider().top() + 45, "PORT"));
 
     }
@@ -103,7 +105,7 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(3))) {
                 if (inputError()) {
                     labels.add(new Label(buttons.get(2).collider().left() -20, buttons.get(1).collider().bottom() + 30, " Please Enter Correct Information ", FontLoader.Future(20)));
@@ -114,6 +116,7 @@ public class CreateRoomScene extends Scene implements CommandSolver.MouseCommand
                 ConnectTool.instance().createRoom(Integer.parseInt(getPort()));
             }
             if (Global.mouse.isCollision(buttons.get(2))) {
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
             if (Global.mouse.isCollision(buttons.get(0))) {

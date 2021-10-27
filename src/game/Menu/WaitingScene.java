@@ -45,14 +45,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         Position position = randomPosition();
         x = position.intX();
         y = position.intY();
-        if (ConnectTool.instance().isServer()) {
-            Player player = new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.HUNTER, this.name);
-            player.getMovement().setSpeed(Global.NORMAL_SPEED + 1);
-            ConnectTool.instance().setMainPlayer(player);
-
-        } else {
-            ConnectTool.instance().setMainPlayer(new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.PREY, this.name));
-        }
+        ConnectTool.instance().setMainPlayer(new Player(position.intX(), position.intY(), this.imgArrAndType, Player.RoleState.PREY, this.name));
         this.IP = IP;
         this.port = port;
         number = new Label(100, 100, "NUMBER:" + " " + ConnectTool.instance().getMainPlayers().size(), FontLoader.Future(40));
@@ -89,7 +82,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         for (int i = 0; i < ConnectTool.instance().getMainPlayers().size(); i++) {
             Player player = ConnectTool.instance().getMainPlayers().get(i);
             player.getOriginalAnimation().paint(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i, Global.SCREEN_Y / 2, Global.UNIT_WIDTH * 2, Global.UNIT_HEIGHT * 2, g);
-            player.getNameLabel().setXY(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i + 30, Global.SCREEN_Y / 2 - 15);
+            player.getNameLabel().setXY(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i + 45-player.getName().length()*4, Global.SCREEN_Y / 2 - 15);
             player.getNameLabel().paint(g);
         }
         backButton.paint(g);
@@ -122,7 +115,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons)) {
                 if (ClientClass.getInstance().getID() == 100) {
                     ClientClass.getInstance().sent(START_GAME, bale());

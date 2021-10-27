@@ -36,6 +36,7 @@ public class Pact {
     public static final int NOT_MOVE = 31;
     public static final int OUTRAGE = 32;
     public static final int DECREASE_SPEED = 33;
+    public static final int RANDOM_HUNTER = 34;
 
 //    public static final int PLAYER_POSITION = 19;
     //public static final int COMPUTER_CHASE 不確定

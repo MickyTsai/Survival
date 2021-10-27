@@ -27,6 +27,11 @@ public class Label extends GameObject {
         this.font=font;
         this.color=color;
     }
+    public Label(int x,int y,String inputWords,Color color){
+        super(x,y,0,0);
+        this.words=inputWords;
+        this.color=color;
+    }
 
     @Override
     public void paintComponent(Graphics g) {
@@ -46,5 +51,10 @@ public class Label extends GameObject {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return  words ;
     }
 }

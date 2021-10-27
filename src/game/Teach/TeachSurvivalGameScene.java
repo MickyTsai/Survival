@@ -39,13 +39,15 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
 
         int inter=70;
         //標題(label1)
-        labels.add(new Label(Global.SCREEN_X/4+30,Global.SCREEN_Y/4,"SURVIVAL GAME RULE",FontLoader.cuteChinese(60)));
+        labels.add(new Label(Global.SCREEN_X/2 - 170,Global.SCREEN_Y/4 -100,"SURVIVAL GAME RULE",FontLoader.cuteChinese(40)));
+        labels.add(new Label(Global.SCREEN_X/2 -180 ,Global.SCREEN_Y/4 - 60,"      生存模式      ",FontLoader.cuteChinese(40)));
 
         //規則(2~)
-        labels.add(new Label(Global.SCREEN_X/8,Global.SCREEN_Y/4+inter,"1.玩家為獵物",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(2).collider().left(),labels.get(2).collider().bottom()+inter,"2.需逃離其他獵人生存下去，並透過道具提升素質",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(3).collider().left(),labels.get(3).collider().bottom()+inter,"3.獵人會隨著時間進化",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(4).collider().left(),labels.get(4).collider().bottom()+inter,"4.生存時間越長，離生存大師的稱號也就越近",FontLoader.cuteChinese(40)));
+        labels.add(new Label(Global.SCREEN_X/8,Global.SCREEN_Y/4+inter,"1.被獵人抓到就Game Over",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(3).collider().left(),labels.get(3).collider().bottom()+inter,"2.盡快取得越多道具，是生存下去的關鍵",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(4).collider().left(),labels.get(4).collider().bottom()+inter,"3.獵人會隨著時間進行 \"特殊能力\"越多",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(5).collider().left(),labels.get(5).collider().bottom()+inter,"4.變身為當前地圖角色時，能暫時迴避獵人追蹤",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(6).collider().left(),labels.get(6).collider().bottom()+inter,"5.這個模式 \"沒有\" 積分，活到時間結束就是Winner",FontLoader.cuteChinese(40)));
 
     }
 
@@ -99,7 +101,7 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 SceneController.getInstance().change(new SingleSurvivalGameScene());
             }

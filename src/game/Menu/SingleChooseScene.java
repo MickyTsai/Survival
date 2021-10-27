@@ -68,7 +68,7 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
     public void sceneEnd() {
         this.labels = null;
         this.img = null;
-        AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
+        AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
     }
 
     @Override
@@ -132,7 +132,7 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 SceneController.getInstance().change(new TeachPointGameScene());
             }
@@ -140,7 +140,7 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
                 SceneController.getInstance().change(new TeachSurvivalGameScene());
             }
             if (Global.mouse.isCollision(buttons.get(2))) {
-                AudioResourceController.getInstance().stop(new Path().sound().background().lovelyflower());
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
 

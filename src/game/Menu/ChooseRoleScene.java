@@ -106,7 +106,7 @@ public class ChooseRoleScene extends Scene implements CommandSolver.MouseCommand
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 currentAnimation = buttons.get(0).getAnimation();
                 buttons.get(4).setAnimation(currentAnimation);

@@ -24,13 +24,12 @@ public class TransformObstacle extends GameObject implements Transformation {
 
 
     public boolean isXYin(int x, int y) {
-        if (x <= painter().right() && x >= painter().left() && y <= painter().bottom() && y >= painter().top()) {
+        if (x <= painter().right() && x >= painter().left() && y <= painter().bottom() && y >= painter().top() &&
+                x <= Global.MAP_PIXEL_WIDTH - 20 && x >= 20 && y <= Global.MAP_PIXEL_HEIGHT - 20 && y >= 20) {
             return true;
         }
         return false;
     }
-
-
 
     @Override
     public void paintComponent(Graphics g) {

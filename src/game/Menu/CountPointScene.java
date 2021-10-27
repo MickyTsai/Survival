@@ -23,6 +23,7 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
     private ArrayList<Animation> animations;
     private Button button;
     private Label title;
+    private Button buttonTouch;
 
 
     @Override
@@ -33,6 +34,7 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         title = new Label(Global.SCREEN_X / 3 - 80, Global.SCREEN_Y / 4 - 20, "S C O R E", FontLoader.Blocks(100));
         setLabels();
         button = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross));
+        buttonTouch=new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton));
     }
 
     @Override
@@ -55,6 +57,10 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         }
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
+        }
+
+        if(Global.mouse.isCollision(buttonTouch)){
+            buttonTouch.paint(g);
         }
         button.paint(g);
         Global.mouse.paint(g);
@@ -110,7 +116,7 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(button)) {
                 if (ConnectTool.instance().isConnect()) {
                     ClientClass.getInstance().disConnect();

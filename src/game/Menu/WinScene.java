@@ -21,6 +21,7 @@ public class WinScene extends Scene implements CommandSolver.MouseCommandListene
     private Label label2;
     private Label label3;
     private ArrayList<Animation> animations;
+    private Button touchButton;
 
 
     @Override
@@ -29,7 +30,7 @@ public class WinScene extends Scene implements CommandSolver.MouseCommandListene
         AudioResourceController.getInstance().loop(new Path().sound().background().winScene(), -1);
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene2());
         button = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross));
-        label = new Label(Global.SCREEN_X / 3 - 150, Global.SCREEN_Y / 2, "Too easy?", FontLoader.Blocks(100), Color.RED);
+        label = new Label(Global.SCREEN_X / 3 - 80, Global.SCREEN_Y / 2, "Too easy?", FontLoader.cuteChinese(100),Color.RED);
         label2 = new Label(Global.SCREEN_X / 4 - 120, Global.SCREEN_Y / 2 + 100, "Let's Battle in Connect Mode!!", FontLoader.dotChinese(50), Color.black);
         label3 = new Label(Global.SCREEN_X - 500, Global.SCREEN_Y - 50, "P.S.   You Have to Find Some Friends First. QQ ", FontLoader.Mini_Square(20), Color.pink);
         Animation animation = new Animation(AllImages.star);
@@ -37,6 +38,8 @@ public class WinScene extends Scene implements CommandSolver.MouseCommandListene
         animations.add(animation);
         animations.add(animation);
         animations.add(animation);
+        touchButton = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton));
+
     }
 
     @Override
@@ -51,6 +54,9 @@ public class WinScene extends Scene implements CommandSolver.MouseCommandListene
         animations.get(0).paint(60, -150, 500, 500, g);
         animations.get(1).paint(30, Global.SCREEN_Y / 5 + 100, 500, 500, g);
         animations.get(2).paint(Global.SCREEN_X - 300, 200, 500, 500, g);
+        if(Global.mouse.isCollision(button)){
+            touchButton.paint(g);
+        }
         button.paint(g);
         label.paint(g);
         label2.paint(g);
@@ -78,7 +84,7 @@ public class WinScene extends Scene implements CommandSolver.MouseCommandListene
         if (state == CommandSolver.MouseState.MOVED) {
             Global.mouse.mouseTrig(e, state, trigTime);
         }
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(button)) {
                 SceneController.getInstance().change(new MenuScene());
             }

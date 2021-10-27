@@ -41,15 +41,16 @@ public class TeachPointGameScene extends Scene implements CommandSolver.MouseCom
 
         int inter=70;
         //標題(label1)
-        labels.add(new Label(Global.SCREEN_X/4+30,Global.SCREEN_Y/4,"POINT GAME RULE",FontLoader.cuteChinese(60)));
+        labels.add(new Label(Global.SCREEN_X/2 - 160,Global.SCREEN_Y/4 -100,"POINT GAME RULE",FontLoader.cuteChinese(40)));
+        labels.add(new Label(Global.SCREEN_X/2 -190 ,Global.SCREEN_Y/4 - 60,"      積分模式      ",FontLoader.cuteChinese(40)));
 
         //規則(2~)
-        labels.add(new Label(Global.SCREEN_X/8,Global.SCREEN_Y/4+inter,"1.玩家初始為Hunter",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(2).collider().left(),labels.get(2).collider().bottom()+inter,"2.獵捕其他獵物交換身分並奪取積分",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(3).collider().left(),labels.get(3).collider().bottom()+inter,"3.成為獵物時需透過移動來獲取積分",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(4).collider().left(),labels.get(4).collider().bottom()+inter,"4.當遊戲時間到時積分最多則為贏家",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(4).collider().left(),labels.get(4).collider().bottom()+inter,"4.當遊戲時間到時積分最多則為贏家",FontLoader.cuteChinese(40)));
-        labels.add(new Label(labels.get(5).collider().left(),labels.get(5).collider().bottom()+inter,"5.遠離封閉區域，否則將會被扣分",FontLoader.cuteChinese(40)));
+        labels.add(new Label(Global.SCREEN_X/8,Global.SCREEN_Y/4+inter,"1.玩家一開始是獵人",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(3).collider().left(),labels.get(3).collider().bottom()+inter,"2.馬上去抓到其他電腦，奪取它的積分",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(4).collider().left(),labels.get(4).collider().bottom()+inter,"3.不是獵人時，要不斷移動才會增加積分",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(5).collider().left(),labels.get(5).collider().bottom()+inter,"4.隨時間進行，會逐漸將部分區域變為\"扣分區\"",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(6).collider().left(),labels.get(6).collider().bottom()+inter,"  在扣分區時積分會不斷減少，要馬上離開",FontLoader.cuteChinese(40)));
+        labels.add(new Label(labels.get(7).collider().left(),labels.get(7).collider().bottom()+inter,"5.積分最多為贏家",FontLoader.cuteChinese(40)));
 
     }
 
@@ -103,7 +104,7 @@ public class TeachPointGameScene extends Scene implements CommandSolver.MouseCom
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
                 SceneController.getInstance().change(new SinglePointGameScene());
             }

@@ -3,6 +3,7 @@ package game.gameObj.players;
 import game.Menu.FontLoader;
 import game.Menu.Label;
 import game.Menu.Mouse;
+import game.controllers.SceneController;
 import game.core.Global;
 import game.core.Movement;
 import game.core.Position;
@@ -48,6 +49,8 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
 
     public static final Animation bumpAnimation = new Animation(AllImages.bump);
     public static final Animation hunterAnimation = new Animation(AllImages.HUNTER);
+    public static final Animation outrageAnimation = new Animation(AllImages.outrage);
+    public static final Animation teleAnimation = new Animation(AllImages.teleAnimation, 5);
 
 
     //移動相關
@@ -56,6 +59,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public Delay canMoveDelay;
     protected MovingState movingState;
     public Delay moveDelay;
+    private Delay teleDelay;
 
     //交換身分相關
     protected RoleState roleStateBeforeBump;
@@ -113,7 +117,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         painter().setCenter(collider().centerX(), collider().centerY());
         point = 0;
         this.name = name;
-        nameLabel = new Label(painter().getX() + 10, painter().getY(), name, FontLoader.Mini_Square(15), Color.BLACK);
+        nameLabel = new Label(painter().getX() + 10, painter().getY(), name, FontLoader.Future_Narrow(15), Color.BLACK);
 
         canMove = true;
         canPass = true;
@@ -143,6 +147,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         outRageTime = new Delay(300);
         trapDelay = new Delay(120);
         superStarDelay = new Delay(600);
+        teleDelay = new Delay(40);
         hunterWatcherDelay = new Delay(600);
         moveDelay = new Delay(1);
         moveDelay.play();
@@ -163,6 +168,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         currentAnimation.update();
         propsEffectUpdate();
         transformResetUpdate();
+        outrageUpdate();
         if (trapDelay.count()) {
             canMove = true;
         }
@@ -182,13 +188,6 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         }
         //觸發Movement監聽到的移動變化
         movement.keyPressed(commandCode, trigTime);
-        if (commandCode == Global.KeyCommand.TRANSFORM.getValue()) {
-            transform();
-            outrage();
-        }
-        if (commandCode == Global.KeyCommand.TELEPORTATION.getValue()) {
-            clickedTeleportation();
-        }
     }
 
 
@@ -200,6 +199,13 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 commandCode == Global.KeyCommand.RIGHT.getValue()) {
             movingState = MovingState.STAND;
         }
+        if (commandCode == Global.KeyCommand.TELEPORTATION.getValue()) {
+            clickedTeleportation();
+        }
+        if (commandCode == Global.KeyCommand.TRANSFORM.getValue()) {
+            transform();
+            outrage();
+        }
     }
 
     @Override
@@ -209,7 +215,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
 
 
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime, ArrayList<MapObject> unPassMapObjects, ArrayList<TransformObstacle> transformObstacles, Camera camera, Mouse mouse) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             int mouseX = e.getX() + camera.painter().left();
             int mouseY = e.getY() + camera.painter().top();
             for (int i = 0; i < transformObstacles.size(); i++) {
@@ -383,7 +389,8 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public void transform() {
         if (storedTransformAnimation == null ||
                 !canTransform ||
-                roleState == RoleState.HUNTER) {
+                roleState == RoleState.HUNTER ||
+                roleState == RoleState.BUMPING) {
             return;
         }
         AudioResourceController.getInstance().play(new Path().sound().background().transform());
@@ -408,6 +415,22 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         outRageCD.play();
         outRageTime.play();
         canOutrage = false;
+        currentAnimation = outrageAnimation;
+    }
+
+    public void outrageUpdate() {
+        if (outRageTime.count()) {
+            isInOutrage = false;
+            getMovement().setSpeed(getCurrentSpeed());
+            if (roleState == RoleState.HUNTER) {
+                currentAnimation = hunterAnimation;
+            } else if (roleState == RoleState.PREY) {
+                currentAnimation = originalAnimation;
+            }
+        }
+        if (outRageCD.count()) {
+            canOutrage = true;
+        }
     }
 
     protected void transformResetUpdate() {
@@ -416,6 +439,13 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         }
         if (transformTime.count()) {
             animationUpdate();
+        }
+        if (teleDelay.count()) {
+            if (roleState == RoleState.HUNTER) {
+                currentAnimation = hunterAnimation;
+            } else {
+                currentAnimation = originalAnimation;
+            }
         }
     }
 
@@ -442,6 +472,9 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public void clickedTeleportation() {
         if (canUseTeleportation) {
             isUseTeleportation = true;
+            if (ClientClass.getInstance().getID() == id) {
+                Global.mouse.setImg(Mouse.teleportationMouse);
+            }
         }
     }
 
@@ -450,9 +483,12 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
             return;
         }
         AudioResourceController.getInstance().play(new Path().sound().background().teleportation());
+        currentAnimation = teleAnimation;
         setXY(x, y);
         isUseTeleportation = false;
         canUseTeleportation = false;
+        Global.mouse.setImg(Mouse.magicWand);
+        teleDelay.play();
     }
 
 
@@ -683,5 +719,17 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
 
     public int getCurrentSpeed() {
         return currentSpeed;
+    }
+
+    public int getOutrageCd() {
+        return 20 - outRageCD.getCount() / 60;
+    }
+
+    public void setRoleState(RoleState inputRoleState) {
+        this.roleState = inputRoleState;
+    }
+
+    public void setRoleStateBeforeBump(RoleState roleStateBeforeBump) {
+        this.roleStateBeforeBump = roleStateBeforeBump;
     }
 }

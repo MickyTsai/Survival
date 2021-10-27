@@ -92,6 +92,9 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     //321動畫
     private Label label321;
 
+    //獵人爆走cd
+    private Label hunterCDLabel;
+
 
     public SinglePointGameScene() {
         currentSound = new Path().sound().background().mainscene();
@@ -110,6 +113,7 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         gameObjectList = new ArrayList<>();
         players = new ArrayList<>();
         labels = new ArrayList<>();
+
 
         //道具相關
         propsReProduce = new Delay(900);
@@ -133,10 +137,16 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         changeBody = new Animation(AllImages.changeBody);
         imgWarning = new Animation(AllImages.WARNING);
         no = new Animation(AllImages.no);
+
+        //獵物cd資訊
         transFormCDLabel = new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30, String.valueOf(mainPlayer.transformCDTime()), FontLoader.Future(20));
         labels.add(new Label(Global.RUNNER_X + 75, Global.RUNNER_Y + 85, "F", FontLoader.Future(20)));
         labels.add(new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 75, Global.RUNNER_Y + 85, "R", FontLoader.Future(20)));
         labels.add(transFormCDLabel);
+
+        //獵人cd資訊
+        hunterCDLabel = new Label(Global.RUNNER_X + Global.GAME_SCENE_BOX_SIZE + 5 + 15, Global.RUNNER_Y + 30, String.valueOf(mainPlayer.getOutrageCd()), FontLoader.Future(20));
+
 
         //將要畫的物件存進ArrayList 為了要能在ArrayList取比較 重疊時畫的先後順序（y軸）
         players.forEach(player -> gameObjectList.addAll(List.of(player)));
@@ -272,11 +282,13 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         camera.update();
         //cd時間顯示之資料
         transFormCDLabel.setWords(String.valueOf(mainPlayer.transformCDTime()));
+        hunterCDLabel.setWords(String.valueOf(mainPlayer.getOutrageCd()));
         timeUP();
         //碰撞道具時播放動畫的更新
         if (mainPlayerCollisionProps != null) {
             allPropsAnimation.get(mainPlayerCollisionProps.getPropsType()).update();
         }
+
     }
 
     @Override
@@ -406,14 +418,20 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         }
         runner.paint(0, Global.SCREEN_Y - 100, 100, 100, g);
         changeBody.paint(105, Global.SCREEN_Y - 100, 100, 100, g);
-        if (mainPlayer.getStoredTransformAnimation() != null) {
-            mainPlayer.getStoredTransformAnimation().paint(125, Global.SCREEN_Y - 80, 60, 60, g);
-        }
-        for (int i = 0; i < labels.size(); i++) {
+        for (int i = 0; i < labels.size() - 1; i++) {
             labels.get(i).paint(g);
         }
+
+        //獵人要印
         if (mainPlayer.roleState == Player.RoleState.HUNTER) {
-            no.paint(105, Global.SCREEN_Y - 100, 100, 100, g);
+            no.paint(120, Global.SCREEN_Y - 85, 70, 70, g);
+            hunterCDLabel.paint(g);
+        } else {
+            if (mainPlayer.getStoredTransformAnimation() != null) {
+                mainPlayer.getStoredTransformAnimation().paint(125, Global.SCREEN_Y - 80, 60, 60, g);
+            }
+            //prey要印的
+            labels.get(2).paint(g);
         }
     }
 
@@ -501,13 +519,14 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
     /**
      * 區域關閉前提醒
+     *
      * @param g 繪圖
      */
     private void beforeClosdTip(Graphics g) {
         if (gameTime > 20 && gameTime < 30) {
             Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，森林草原區變成扣分區！", FontLoader.cuteChinese(30));
             labelTip.setColor(Color.BLACK);
-            g.drawImage(point.imgDigits((30 - (int)gameTime) % 10 ),
+            g.drawImage(point.imgDigits((30 - (int) gameTime) % 10),
                     Global.SCREEN_X / 2 - 180,
                     50,
                     30,
@@ -517,7 +536,7 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         } else if (gameTime > 60 && gameTime < 70) {
             Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，冰原雪地區也變成扣分區！", FontLoader.cuteChinese(30));
             labelTip.setColor(Color.BLACK);
-            g.drawImage(point.imgDigits((70 - (int)gameTime) % 10 ),
+            g.drawImage(point.imgDigits((70 - (int) gameTime) % 10),
                     Global.SCREEN_X / 2 - 180,
                     50,
                     30,
@@ -527,17 +546,17 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         } else if (gameTime > 110 && gameTime < 120) {
             Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，荒原紅土區也變成扣分區！", FontLoader.cuteChinese(30));
             labelTip.setColor(Color.BLACK);
-            g.drawImage(point.imgDigits((120 - (int)gameTime) % 10 ),
+            g.drawImage(point.imgDigits((120 - (int) gameTime) % 10),
                     Global.SCREEN_X / 2 - 180,
                     50,
                     30,
                     30,
                     null);
             labelTip.paint(g);
-        } else if (gameTime > 144 && gameTime < 154){
+        } else if (gameTime > 144 && gameTime < 154) {
             Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，遊戲結束！！！", FontLoader.cuteChinese(30));
             labelTip.setColor(Color.BLACK);
-            g.drawImage(point.imgDigits((154 - (int)gameTime) % 10 ),
+            g.drawImage(point.imgDigits((154 - (int) gameTime) % 10),
                     Global.SCREEN_X / 2 - 180,
                     50,
                     30,
@@ -549,10 +568,11 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
 
     /**
      * 進入扣分區的顯示警示
+     *
      * @param g
      */
     private void paintWarning(Graphics g) {
-        if (mainPlayer.isInClosedArea()) {
+        if (mainPlayer.isInClosedArea() && mainPlayer.roleState != Player.RoleState.HUNTER) {
             g.setColor(Color.RED);
             imgWarning.paint(
                     Global.SCREEN_X / 2 - 50,
@@ -598,16 +618,12 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
     public void outrageEffect() {
         if (mainPlayer.startOutrage) {
             for (int i = 1; i < players.size(); i++) {
-                players.get(i).getMovement().addSpeed(-1);
+                Player player = players.get(i);
+                if (player.getMovement().getSpeed() > Global.SPEED_MIN) {
+                    player.getMovement().addSpeed(-1);
+                }
             }
             mainPlayer.startOutrage = false;
-        }
-        if (mainPlayer.outRageTime.count()) {
-            mainPlayer.isInOutrage = false;
-            mainPlayer.getMovement().setSpeed(mainPlayer.getCurrentSpeed());
-        }
-        if (mainPlayer.outRageCD.count()) {
-            mainPlayer.canOutrage = true;
         }
     }
 

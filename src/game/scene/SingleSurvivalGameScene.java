@@ -248,7 +248,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         if (pauseWindow.isPause()) {
             return;
         }
-
         //道具生成與更新
         propsGenUpdate();
         allPropsUpdate();

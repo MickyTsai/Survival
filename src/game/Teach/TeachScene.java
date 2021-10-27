@@ -36,10 +36,11 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     //留意畫的順序
     private TeachPlayer mainPlayer;
     private ArrayList<Player> players;
-    private ArrayList<TransformObstacle> transformObstacles;
+
     private ArrayList<MapObject> unPassMapObjects;
     private Camera camera;
     private GameMap gameMap;
+    private MovingObstacle bee;
 
     private Image imgForest;
 
@@ -65,18 +66,20 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     private ArrayList<String> teachStrings;
     private int teachCount;
     //避免一直進入迴圈
-    private Boolean firstBee;
+
     private Boolean firstProps;
     private Boolean firstCongratulations;
+    private Boolean firstHunter;
+    private Boolean useProps;
 
     private Animation button;
     private game.Menu.Button backButton;
     private ArrayList<Button> buttons;
+
     @Override
     public void sceneBegin() {
         AudioResourceController.getInstance().play(new Path().sound().background().gameFirst());
         gameObjectList = new ArrayList<>();//初始ArrayList
-        transformObstacles = new ArrayList<>();
         players = new ArrayList<>();
         labels = new ArrayList<Label>();
         teachStrings = new ArrayList<>();
@@ -102,9 +105,10 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         setAnimation();
         teachCount = 0;
 
-        firstBee = true;
+        firstHunter = true;
         firstProps = true;
         firstCongratulations = true;
+        useProps = false;
         button = new Animation(AllImages.inputButton);
 
         labels.add(new Label(100,80,"NEXT",FontLoader.Blocks(50)));
@@ -112,6 +116,8 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton)));
         buttons.add(new Button(labels.get(3).collider().left()-10,labels.get(3).collider().bottom()-50,160,60,new Animation(AllImages.inputButton)));
         teach = new Animation(AllImages.teach1);
+
+
 
     }
 
@@ -122,7 +128,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         this.propsArrayList = null;
         this.mainPlayer = null;
         this.players = null;
-        this.transformObstacles = null;
         this.unPassMapObjects = null;
         this.camera = null;
         this.gameMap = null;
@@ -139,7 +144,7 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         this.labels = null;
         this.teachLabel = null;
         this.teachStrings = null;
-        this.firstBee = null;
+        this.firstHunter = null;
         this.firstProps = null;
         this.firstCongratulations = null;
         AudioResourceController.getInstance().stop(new Path().sound().background().gameFirst());
@@ -153,6 +158,7 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         //用forEach將ArrayList中每個gameObject去paint()
         gameObjectList.forEach(gameObject -> gameObject.paint(g));
         propsPaint(g);
+        bee.paint(g);
 
         button.paint(0, Global.SCREEN_Y - 100, Global.SCREEN_X, 100, g);
 
@@ -171,8 +177,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         }
 
 
-
-
         //判斷有沒有道具
         if (!mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation()) {
             runnerDark.paint(Global.RUNNER_X, Global.RUNNER_Y - 100, Global.GAME_SCENE_BOX_SIZE, Global.GAME_SCENE_BOX_SIZE, g);
@@ -184,26 +188,31 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
         //變身格
         changeBody.paint(105, Global.SCREEN_Y - 200, 100, 100, g);
-        if (mainPlayer.getStoredTransformAnimation() != null) {
-            mainPlayer.getStoredTransformAnimation().paint(125, Global.SCREEN_Y - 180, 60, 60, g);
-        }
-        if (mainPlayer.roleState == Player.RoleState.HUNTER) {
-            no.paint(105, Global.SCREEN_Y - 200, 100, 100, g);
-        }
-
-        for (int i = 0; i < labels.size(); i++) {
+        for (int i = 0; i < labels.size()-1; i++) {
             labels.get(i).paint(g);
         }
 
-        if (teachCount > 1 && teachCount <= 3) {
-            teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
+        //獵人要印
+        if (mainPlayer.roleState == Player.RoleState.HUNTER) {
+            no.paint(130, Global.SCREEN_Y - 170, 50, 50, g);
+        }else {
+            if (mainPlayer.getStoredTransformAnimation() != null) {
+                mainPlayer.getStoredTransformAnimation().paint(125, Global.SCREEN_Y - 180, 60, 60, g);
+            }
+            //prey要印的
+            labels.get(3).paint(g);
         }
-        if (teachCount > 4 && teachCount <= 8) {
+
+        //教學繪圖
+        if (teachCount > 10 && teachCount <= 17) {
             teach.setImg(AllImages.teach2);
             teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
         }
-        if (teachCount > 10 && teachCount < 16) {
+        if (teachCount > 25 && teachCount < 33) {
             teach.setImg(AllImages.teach3);
+            teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
+        }
+        if (teachCount > 25 && teachCount <= 33) {
             teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
         }
 
@@ -220,16 +229,21 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
         sortObjectByPosition();
         //用forEach將ArrayList中每個gameObject去update()
-        keepNotPass(transformObstacles);
         keepNotPass(unPassMapObjects);
         allPropsUpdate();
+        bee.moveTeachScene();
 
         gameObjectList.forEach(gameObject -> gameObject.update());
         cPlayerCheckOthersUpdate();
         playerCollisionCheckUpdate();
         propsCollisionCheckUpdate();
         camera.update();
-        labels.get(2).setWords(String.valueOf(mainPlayer.transformCDTime()));
+        if(mainPlayer.roleState == Player.RoleState.HUNTER){
+            labels.get(2).setWords(String.valueOf(mainPlayer.getOutrageCd()));
+        }else {
+            labels.get(2).setWords(String.valueOf(mainPlayer.transformCDTime()));
+        }
+
 
         if (teachLabel != null) {
             if (labelTime.count() && teachCount < teachStrings.size() - 1) {
@@ -238,27 +252,30 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
             }
         }
 
+        //變身完後教學使用道具
+        if (mainPlayer.getCurrentAnimation().getImg() == AllImages.bee && firstProps && teachCount>=4) {
+            firstProps = false;
+            produceProps();
 
-        if (mainPlayer.roleState == Player.RoleState.PREY && firstBee) {
+        }
+        if(mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation() && teachCount > 20){
             if (labelTime.count()) {
-                produceBee();
-                firstBee = false;
+                useProps=true;
             }
         }
-        if (mainPlayer.getCurrentAnimation().getImg() == AllImages.bee && firstProps) {
-            if (labelTime.count()) {
-                firstProps = false;
-                produceProps();
-            }
+        if(useProps &&firstHunter){
+            firstHunter = false;
+            produceHunter();
+
         }
-        if (mainPlayer.isCanUseTeleportation() && mainPlayer.isUseTeleportation() && firstCongratulations) {
+        if (mainPlayer.getOutrageCd()<15  && firstCongratulations) {
             firstCongratulations = false;
             produceCongratulations();
         }
-        if (firstCongratulations == false && teachCount == teachStrings.size() - 1) {
-            SceneController.getInstance().change(new MenuScene());
-        }
 
+        if (firstCongratulations == false && teachCount == teachStrings.size() - 1) {
+            SceneController.getInstance().change(new SurvivalPropsRuleScene());
+        }
 
     }
 
@@ -369,14 +386,14 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
     @Override
     public void mouseTrig(MouseEvent e, CommandSolver.MouseState state, long trigTime) {
-        if (state == CommandSolver.MouseState.CLICKED) {
+        if (state == CommandSolver.MouseState.PRESSED) {
             int mouseX = e.getX();
             int mouseY = e.getY();
-            for (TransformObstacle transformObstacle : transformObstacles) {
-                if (transformObstacle.isXYin(mouseX, mouseY)) {
-                    mainPlayer.chooseTransformObject(transformObstacle);
-                }
+
+            if (bee.isXYin(mouseX, mouseY)) {
+                mainPlayer.chooseTransformObject(bee);
             }
+
 
             for (MapObject mapObject : unPassMapObjects) {
                 if (mapObject.isXYin(mouseX, mouseY)) {
@@ -415,47 +432,80 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
      * 先有玩家
      */
     private void producePlayer() {
-        mainPlayer = new TeachPlayer(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.beige, Player.RoleState.HUNTER, Global.SCREEN_X, Global.SCREEN_Y - 100);
+        mainPlayer = new TeachPlayer(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.beige, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y - 100);
         players.add(mainPlayer);
-        players.add(new TeachComputerPlayer(500, 500, AllImages.blue, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y));
+//        players.add(new TeachComputerPlayer(500, 500, AllImages.blue, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y));
+        teachStrings.add("歡迎來到SURVIVAL");
+        teachStrings.add("這裡為基本操作的教學");
+        teachStrings.add("如果是第一次遊玩 請務必操作一次");
+        teachStrings.add("就讓我們開始囉～");
         teachStrings.add("");
-        //擊因為字體沒有因此不會出現，故用來抓區間使用
-        teachStrings.add("   擊擊擊使用鍵盤WASD上下移動擊擊擊");
-        teachStrings.add("   當身分為獵人時左下角格子出現叉叉擊");
-        teachStrings.add("   請試著追捕其他獵物獲取積分並交換身分");
+        teachStrings.add("鍵盤的 W-A-S-D-對應 上-下-左-右- 來移動");
+        teachStrings.add("畫面中間為玩家圖像（像是小小兵）時");
+        teachStrings.add("會有變身的功能");
+        teachStrings.add("");
+        teachStrings.add("移動滑鼠游標（魔法棒）");//10
+        teachStrings.add("點選地圖上的角色(例如：蜜蜂)");
+        teachStrings.add("左下角 右邊格子就會出現可以變身角色的圖");
+        teachStrings.add("");
+        teachStrings.add("這時按下鍵盤R 就可以變身成功！ ");
+        teachStrings.add("變身只能維持7秒!要注意！ ");
+        teachStrings.add("操作看看~");
+        teachStrings.add("");//17
 
+        bee= new MovingObstacle(1000, 300, AllImages.bee);
 
         labelTime.play();
         labelTime.loop();
         teachLabel = new Label(Global.SCREEN_X / 4 - 100, Global.SCREEN_Y - 40, teachStrings.get(0), FontLoader.cuteChinese(40));
     }
 
-    private void produceBee() {
-        teachStrings.add("");
-        teachStrings.add("    擊擊擊身分為普通玩家擊擊擊擊擊擊擊");
-        teachStrings.add("    擊擊即可使用魔法棒點選物件擊擊擊");
-        teachStrings.add("    擊並按R變身成為該物隱身在地圖中擊");
-        teachStrings.add("    擊擊擊試著尋找蜜蜂並變身吧!!!擊擊");
 
-        transformObstacles.add(new MovingObstacle(800, 300, AllImages.bee));
-        transformObstacles.forEach(transformObstacle -> gameObjectList.addAll(List.of(transformObstacle)));
-
-    }
 
     private void produceProps() {
+        teachStrings.add("GOOD");
         teachStrings.add("");
-        teachStrings.add("    擊擊地圖將會隨機出現道具擊擊擊");
-        teachStrings.add("    擊擊擊擊請拾取道具擊擊擊擊擊擊");
-        teachStrings.add("    擊擊當道具為瞬間移動時擊擊擊擊");
-        teachStrings.add("    擊擊擊左下方格則亮起擊擊擊擊擊");
-        teachStrings.add("    擊擊按F並點選地上任一點即可順移擊");
+        teachStrings.add("現在來介紹瞬間移動功能~");
+        teachStrings.add("遊戲中地圖會隨機出現道具");
+        teachStrings.add("道具的功能是 \"隨機\" 的");
+        teachStrings.add("其中一種就是 瞬間移動 ");
+        teachStrings.add("");
+        teachStrings.add("當道具為瞬間移動時");//25
+        teachStrings.add("左下角 左邊格子會亮起");
+        teachStrings.add("鍵盤按F 準備發動");
+        teachStrings.add("滑鼠游標會變成光環圖示");
+        teachStrings.add("點選任一地點即可瞬間移動");
+        teachStrings.add("在逃命時非常好用！");
+        teachStrings.add("");
+        teachStrings.add("操作看看~");
+        teachStrings.add("");//33
 
         propsArrayList.add(new Props(Global.SCREEN_X / 2, Global.SCREEN_Y / 2 - 100, Props.Type.teleportation));
         propsArrayList.add(new Props(Global.SCREEN_X / 3 - 100, Global.SCREEN_Y / 3 - 100, Props.Type.teleportation));
     }
 
-    private void produceCongratulations() {
+    private void produceHunter() {
+        mainPlayer.setRoleState(Player.RoleState.HUNTER);
+        //擊因為字體沒有因此不會出現，故用來抓區間使用
+        teachStrings.add("GOOD");
         teachStrings.add("");
+        teachStrings.add("現在要來介紹當成為獵人時");
+        teachStrings.add("玩家圖像會變成現在這個獵人角色");
+        teachStrings.add("");
+        teachStrings.add("這個時候沒有變身功能");
+        teachStrings.add("會換成獨特技能\"暴怒\"");
+        teachStrings.add("\"暴怒\"施放後速度會大增");
+        teachStrings.add("並且暫時看到其他玩家位置");
+        teachStrings.add("還會讓其他玩家移動速度-1 (永久)");
+        teachStrings.add("");
+        teachStrings.add("多多利用 去追捕其他玩家(去撞他)");
+        teachStrings.add("可以\"奪取他的積分\"並\"換他當獵人\"");
+        teachStrings.add("");
+        teachStrings.add("操作看看~");
+        teachStrings.add("");
+
+    }
+    private void produceCongratulations() {
         teachStrings.add("    擊擊恭喜~已具備基本技能擊擊擊");
         teachStrings.add("    擊擊可以到遊戲模式遊玩囉擊擊擊");
         teachStrings.add("");

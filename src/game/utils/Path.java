@@ -351,6 +351,10 @@ public class Path {
                     return this + "/magicWand.png";
                 }
 
+                public String teleportationMouse() {
+                    return this + "/teleportationMouse.png";
+                }
+
                 public String cross() {
                     return this + "/cross.png";
                 }
@@ -620,6 +624,37 @@ public class Path {
                     return this + "/spider_walk2.png";
                 }
 
+                public String tele_1() {
+                    return this + "/tele_1.png";
+                }
+
+                public String tele_2() {
+                    return this + "/tele_2.png";
+                }
+
+                public String tele_3() {
+                    return this + "/tele_3.png";
+                }
+
+                public String tele_4() {
+                    return this + "/tele_4.png";
+                }
+
+                public String outrage_1() {
+                    return this + "/outrage_1.png";
+                }
+
+                public String outrage_2() {
+                    return this + "/outrage_2.png";
+                }
+
+                public String outrage_3() {
+                    return this + "/outrage_3.png";
+                }
+
+                public String outrage_4() {
+                    return this + "/outrage_4.png";
+                }
             }
 
             public String no() {
