@@ -119,9 +119,16 @@ public class MapObject extends GameObject {
                 null);
     }
 
-    public boolean isXYin(int x, int y) {
-        if (x <= painter().right() - 20 && x >= painter().left() + 20 && y <= painter().bottom() - 20 && y >= painter().top() + 20 &&
-                x <= Global.MAP_PIXEL_WIDTH - 20 && x >= 20 && y <= Global.MAP_PIXEL_HEIGHT - 20 && y >= 20) {
+    public boolean isXYNotIn(int x, int y) {
+        if (x <= collider().right() && x >= collider().left() - 51 && y <= collider().bottom() && y >= collider().top() - 51
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isXYNotInMap(int x, int y) {
+        if (x >= Global.MAP_PIXEL_WIDTH - 51 || x <= 10 || y >= Global.MAP_PIXEL_HEIGHT - 51 || y <= 40) {
             return true;
         }
         return false;

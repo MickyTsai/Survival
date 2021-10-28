@@ -3,12 +3,9 @@ package game.gameObj.players;
 import game.Menu.FontLoader;
 import game.Menu.Label;
 import game.Menu.Mouse;
-import game.controllers.SceneController;
 import game.core.Global;
 import game.core.Movement;
-import game.core.Position;
 import game.gameObj.GameObject;
-import game.gameObj.Pact;
 import game.gameObj.Props;
 import game.gameObj.Transformation;
 import game.gameObj.mapObj.MapObject;
@@ -28,7 +25,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static game.gameObj.Pact.*;
-import static game.gameObj.Props.Type.trap;
 
 public class Player extends GameObject implements CommandSolver.KeyListener {
 
@@ -47,10 +43,10 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     }
 
 
-    public static final Animation bumpAnimation = new Animation(AllImages.bump);
-    public static final Animation hunterAnimation = new Animation(AllImages.HUNTER);
-    public static final Animation outrageAnimation = new Animation(AllImages.outrage);
-    public static final Animation teleAnimation = new Animation(AllImages.teleAnimation, 5);
+    public final Animation bumpAnimation = new Animation(AllImages.bump, 30);
+    public final Animation hunterAnimation = new Animation(AllImages.HUNTER);
+    public final Animation outrageAnimation = new Animation(AllImages.outrage);
+    public final Animation teleAnimation = new Animation(AllImages.teleAnimation, 5);
 
 
     //移動相關
@@ -139,8 +135,8 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         }
 
         pointDelay = new Delay(60);
-        collisionDelay = new Delay(360);
-        canMoveDelay = new Delay(300);
+        collisionDelay = new Delay(200);
+        canMoveDelay = new Delay(180);
         transformCD = new Delay(600); //十秒
         transformTime = new Delay(420); //七秒
         outRageCD = new Delay(1200);
@@ -229,7 +225,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 }
             }
             for (MapObject mapObject : unPassMapObjects) {
-                if (mapObject.isXYin(mouseX, mouseY)) {
+                if (mapObject.isXYNotIn(mouseX, mouseY) || mapObject.isXYNotInMap(mouseX, mouseY)) {
                     return;
                 }
             }
@@ -586,6 +582,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
             case timeStop:
                 if (Global.IS_DEBUG)
                     System.out.println("獵人時間暫停");
+                AudioResourceController.getInstance().play(new Path().sound().background().addSpeed());
                 isHunterStop = true;
                 break;
             case hunterWatcher:
@@ -732,4 +729,5 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public void setRoleStateBeforeBump(RoleState roleStateBeforeBump) {
         this.roleStateBeforeBump = roleStateBeforeBump;
     }
+
 }

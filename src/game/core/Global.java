@@ -98,10 +98,8 @@ public class Global {
     public static final int NORMAL_SPEED = 3;
     public static final int COMPUTER_SPEED1 = 2;
     public static final int COMPUTER_SPEED2 = 3;
-    public static final int COMPUTER_SPEED3 = 3;
-    public static final int COMPUTER_SPEED4 = 4;
-    public static final int SPEED_MIN = 2;
-
+    public static final int COMPUTER_SPEED3 = 4;
+    public static final int COMPUTER_SPEED4 = 5;
 
     //電腦追蹤移動獵物範圍
     public static final int COMPUTER_CHASE_DISTANCE1 = 300;
@@ -128,13 +126,15 @@ public class Global {
     public static final int ADD_SPEED = 2;
     //速度上限
     public static final int SPEED_MAX = 10;
+    //速度下限
+    public static final int SPEED_MIN = 2;
     //地圖上道具數量上限
-    public static final int PROPS_AMOUNT_MAX = 6;
+    public static final int PROPS_AMOUNT_MAX = 10;
 
     //選擇遊戲時間
     public static final int CHOOSE_GAMETIME = 300;
 
-    public static final int PROPS_AMOUNT_MAX_SURVIVAL_GAME = 10;
+    public static final int PROPS_AMOUNT_MAX_SURVIVAL_GAME = 20;
 
 
     //瞬間移動格的位子
@@ -154,7 +154,6 @@ public class Global {
                     new Path().img().actors().bump().Bump5())));
 
     public static Mouse mouse = new Mouse(0, 0, 50, 50);
-
 
 
     /**

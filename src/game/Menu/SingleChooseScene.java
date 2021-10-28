@@ -29,7 +29,6 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
     private ArrayList<Label> labels;
 
 
-
     //動畫
     ArrayList<Animation> animations;
 
@@ -49,10 +48,9 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         buttons.add(new Button(labels.get(0).painter().left(), labels.get(0).painter().top() - 40, 380, 40));
         buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 380, 40));
         buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT));
-        buttons.add(new Button(labels.get(0).painter().left(), labels.get(0).painter().top() - 40, 380, 40,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 380, 40,new Animation(AllImages.inputButton)));
-        buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT,new Animation(AllImages.inputButton)));
-
+        buttons.add(new Button(labels.get(0).painter().left(), labels.get(0).painter().top() - 40, 380, 40, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(1).painter().left(), labels.get(1).painter().top() - 40, 380, 40, new Animation(AllImages.inputButton)));
+        buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton)));
 
 
         //動畫
@@ -68,7 +66,6 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
     public void sceneEnd() {
         this.labels = null;
         this.img = null;
-        AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
     }
 
     @Override
@@ -82,20 +79,20 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         animations.get(2).paint(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
 
         for (int i = 0; i < buttons.size(); i++) {
-            if(i==3){
-                if(Global.mouse.isCollision(buttons.get(i))){
+            if (i == 3) {
+                if (Global.mouse.isCollision(buttons.get(i))) {
                     buttons.get(i).paint(g);
                 }
 
-            }else if(i==4){
-                if(Global.mouse.isCollision(buttons.get(i))){
+            } else if (i == 4) {
+                if (Global.mouse.isCollision(buttons.get(i))) {
                     buttons.get(i).paint(g);
                 }
-            }else if(i==5){
-                if(Global.mouse.isCollision(buttons.get(i))){
+            } else if (i == 5) {
+                if (Global.mouse.isCollision(buttons.get(i))) {
                     buttons.get(i).paint(g);
                 }
-            }else {
+            } else {
                 buttons.get(i).paint(g);
             }
 
@@ -134,16 +131,17 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         }
         if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(buttons.get(0))) {
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new TeachPointGameScene());
             }
             if (Global.mouse.isCollision(buttons.get(1))) {
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new TeachSurvivalGameScene());
             }
             if (Global.mouse.isCollision(buttons.get(2))) {
                 AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
-
         }
     }
 }

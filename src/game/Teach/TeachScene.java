@@ -11,7 +11,6 @@ import game.gameObj.GameObject;
 import game.gameObj.Props;
 import game.gameObj.mapObj.MapObject;
 import game.gameObj.obstacle.MovingObstacle;
-import game.gameObj.obstacle.TransformObstacle;
 import game.gameObj.players.ComputerPlayer;
 import game.gameObj.players.Player;
 import game.graphic.AllImages;
@@ -71,6 +70,8 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
     private Boolean firstCongratulations;
     private Boolean firstHunter;
     private Boolean useProps;
+    private Boolean becomeBee;
+    private Boolean pickProps;
 
     private Animation button;
     private game.Menu.Button backButton;
@@ -109,6 +110,8 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         firstProps = true;
         firstCongratulations = true;
         useProps = false;
+        becomeBee=false;
+        pickProps=false;
         button = new Animation(AllImages.inputButton);
 
         labels.add(new Label(100,80,"NEXT",FontLoader.Blocks(50)));
@@ -204,7 +207,7 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         }
 
         //教學繪圖
-        if (teachCount > 10 && teachCount <= 17) {
+        if (teachCount > 10 && teachCount <= 16) {
             teach.setImg(AllImages.teach2);
             teach.paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 20, 400, 150, g);
         }
@@ -252,13 +255,21 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
             }
         }
 
-        //變身完後教學使用道具
-        if (mainPlayer.getCurrentAnimation().getImg() == AllImages.bee && firstProps && teachCount>=4) {
+        //確認變身為蜜蜂過
+        if (mainPlayer.getCurrentAnimation().getImg() == AllImages.bee) {
+            becomeBee=true;
+        }
+        //當變身過蜜蜂且未產生過道具且句子跑到16行時才會產生道具
+        if(becomeBee && firstProps && teachCount>=16) {
             firstProps = false;
             produceProps();
-
         }
-        if(mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation() && teachCount > 20){
+        //如果撿取過瞬間移動道具變true
+        if(mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation()){
+            pickProps=true;
+        }
+        //如果撿取過道具且圖像為甚麼都沒有的話代表已經使用過
+        if(pickProps &&!mainPlayer.isCanUseTeleportation() && !mainPlayer.isUseTeleportation() && teachCount >= 32){
             if (labelTime.count()) {
                 useProps=true;
             }
@@ -396,7 +407,7 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
 
             for (MapObject mapObject : unPassMapObjects) {
-                if (mapObject.isXYin(mouseX, mouseY)) {
+                if (mapObject.isXYNotIn(mouseX, mouseY)) {
                     return;
                 }
             }
@@ -486,6 +497,7 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
     private void produceHunter() {
         mainPlayer.setRoleState(Player.RoleState.HUNTER);
+        mainPlayer.animationUpdate();
         //擊因為字體沒有因此不會出現，故用來抓區間使用
         teachStrings.add("GOOD");
         teachStrings.add("");
@@ -510,6 +522,8 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         teachStrings.add("    擊擊可以到遊戲模式遊玩囉擊擊擊");
         teachStrings.add("");
     }
+
+
 
 
 }

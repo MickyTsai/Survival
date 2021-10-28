@@ -155,13 +155,27 @@ public class ComputerPlayer extends Player {
             }
         }
         if (randomMoveDelay.count()) {
-            iniMoveOnX = Global.random(-2, 1);
-            iniMoveOnY = Global.random(-2, 1);
-            if (Global.getProbability(50)) {
-                iniMoveOnX = 0;
-                iniMoveOnY = 0;
+            if (currentAnimation == originalAnimation) {
+                if (Global.getProbability(50)) {
+                    iniMoveOnX = 1;
+                } else {
+                    iniMoveOnX = -1;
+                }
+                if (Global.getProbability(50)) {
+                    iniMoveOnY = 1;
+                } else {
+                    iniMoveOnY = -1;
+                }
+            } else {
+                iniMoveOnX = Global.random(-2, 1);
+                iniMoveOnY = Global.random(-2, 1);
+                if (Global.getProbability(50)) {
+                    iniMoveOnX = 0;
+                    iniMoveOnY = 0;
+                }
             }
         }
+        cpMove();
     }
 
     public void hunterUpdate() {
@@ -205,7 +219,7 @@ public class ComputerPlayer extends Player {
     }
 
     public void escape() {
-        setSpeed(6);
+        setSpeed(4);
         if (chasedPlayer == null) {
             return;
         }
@@ -477,7 +491,7 @@ public class ComputerPlayer extends Player {
     }
 
     public void decreaseSpeed() {
-        speed -= 5;
+        speed -= 1;
         movement.setSpeed(speed);
     }
 
@@ -487,7 +501,7 @@ public class ComputerPlayer extends Player {
             canMove = true;
         }
         if (propsThunderDelay.count()) {
-            speed += 5;
+            speed += 1;
             movement.setSpeed(speed);
         }
     }

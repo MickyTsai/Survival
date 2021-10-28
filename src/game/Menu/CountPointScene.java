@@ -16,6 +16,8 @@ import game.utils.Path;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CountPointScene extends Scene implements CommandSolver.MouseCommandListener {
     private ArrayList<Player> players;
@@ -34,7 +36,8 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         title = new Label(Global.SCREEN_X / 3 - 80, Global.SCREEN_Y / 4 - 20, "S C O R E", FontLoader.Blocks(100));
         setLabels();
         button = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross));
-        buttonTouch=new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton));
+        buttonTouch = new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton));
+
     }
 
     @Override
@@ -52,14 +55,27 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         g.fillRect(0, 0, Global.SCREEN_X, Global.SCREEN_Y);
         g.setFont(FontLoader.Blocks(18));
         title.paint(g);
-        for (int i = 0; i < animations.size(); i++) {
-            animations.get(i).paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 3 + i * 100 - 30, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
+        if (players.size() <= 4) {
+            for (int i = 0; i < players.size(); i++) {
+                animations.get(i).paint(Global.SCREEN_X / 3, Global.SCREEN_Y / 3 + i * 100 - 30, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
+            }
+        } else {
+            for (int i = 0; i < players.size(); i++) {
+                if (i <= 3) {
+                    animations.get(i).paint(Global.SCREEN_X / 5 - 100, Global.SCREEN_Y / 3 + i * 100 - 30, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
+                } else {
+                    int interX = 400;
+                    animations.get(i).paint(Global.SCREEN_X / 5 - 100 + interX, Global.SCREEN_Y / 3 + (i - 4) * 100 - 30, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, g);
+
+                }
+            }
         }
+
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
         }
 
-        if(Global.mouse.isCollision(buttonTouch)){
+        if (Global.mouse.isCollision(buttonTouch)) {
             buttonTouch.paint(g);
         }
         button.paint(g);
@@ -88,15 +104,21 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
     }
 
     public void sort() {
-        for (int i = 0; i < players.size() - 1; i++) {
-            for (int j = 0; j < players.size() - i; j++) {
-                if (players.get(i).getPoint() < players.get(i + 1).getPoint()) {
-                    Player tmp = players.get(i);
-                    players.set(i, players.get(i + 1));
-                    players.set(i + 1, tmp);
-                }
+//        for (int i = 0; i < players.size() - 1; i++) {
+//            for (int j = 0; j < players.size() - i; j++) {
+//                if (players.get(i).getPoint() < players.get(i + 1).getPoint()) {
+//                    Player tmp = players.get(i);
+//                    players.set(i, players.get(i + 1));
+//                    players.set(i + 1, tmp);
+//                }
+//            }
+//        }
+        Collections.sort(players, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return o2.getPoint() - o1.getPoint();
             }
-        }
+        });
     }
 
     public void setLabels() {
@@ -104,10 +126,24 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         for (int i = 0; i < players.size(); i++) {
             animations.add(players.get(i).getOriginalAnimation());
         }
-        for (int i = 0; i < players.size(); i++) {
-            labels.add(new Label(Global.SCREEN_X / 3 + 80, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getName()), FontLoader.Future(20)));
-            labels.add(new Label(Global.SCREEN_X / 3 + 80 + 200, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getPoint()), FontLoader.Future(20)));
+        if (players.size() <= 4) {
+            for (int i = 0; i < players.size(); i++) {
+                labels.add(new Label(Global.SCREEN_X / 3 + 80, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getName()), FontLoader.Future(20)));
+                labels.add(new Label(Global.SCREEN_X / 3 + 80 + 200, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getPoint()), FontLoader.Future(20)));
+            }
+        } else {
+            for (int i = 0; i < players.size(); i++) {
+                if (i <= 3) {
+                    labels.add(new Label(Global.SCREEN_X / 5, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getName()), FontLoader.Future(20)));
+                    labels.add(new Label(Global.SCREEN_X / 5 + 200, Global.SCREEN_Y / 3 + i * 100, String.valueOf(players.get(i).getPoint()), FontLoader.Future(20)));
+                } else {
+                    int interX = 400;
+                    labels.add(new Label(Global.SCREEN_X / 5 + interX, Global.SCREEN_Y / 3 + (i - 4) * 100, String.valueOf(players.get(i).getName()), FontLoader.Future(20)));
+                    labels.add(new Label(Global.SCREEN_X / 5 + 200 + interX, Global.SCREEN_Y / 3 + (i - 4) * 100, String.valueOf(players.get(i).getPoint()), FontLoader.Future(20)));
+                }
+            }
         }
+
     }
 
 

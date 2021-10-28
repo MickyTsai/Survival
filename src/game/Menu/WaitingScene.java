@@ -55,13 +55,16 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
     @Override
     public void sceneBegin() {
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
-
         start = new Label(Global.SCREEN_X / 2 + 200, Global.SCREEN_Y / 2 + 180, "START", FontLoader.Blocks(40));
         buttons = new Button(start.collider().right() + 40 + 20, start.collider().bottom(), Global.UNIT_WIDTH * 2 + 30, Global.UNIT_HEIGHT, start);
         try {
             ConnectTool.instance().connect(IP, port);
 
         } catch (Exception e) {
+            SceneController.getInstance().change(new MenuScene());
+        }
+        if (ClientClass.getInstance().getID() >= 108) { //人數 8人限制
+            ConnectTool.instance().disconnect();
             SceneController.getInstance().change(new MenuScene());
         }
     }
@@ -82,7 +85,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
         for (int i = 0; i < ConnectTool.instance().getMainPlayers().size(); i++) {
             Player player = ConnectTool.instance().getMainPlayers().get(i);
             player.getOriginalAnimation().paint(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i, Global.SCREEN_Y / 2, Global.UNIT_WIDTH * 2, Global.UNIT_HEIGHT * 2, g);
-            player.getNameLabel().setXY(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i + 45-player.getName().length()*4, Global.SCREEN_Y / 2 - 15);
+            player.getNameLabel().setXY(Global.SCREEN_X / 2 - ConnectTool.instance().getMainPlayers().size() * (Global.UNIT_WIDTH * 2 + 10) + Global.UNIT_WIDTH * 2 * i + 45 - player.getName().length() * 4, Global.SCREEN_Y / 2 - 15);
             player.getNameLabel().paint(g);
         }
         backButton.paint(g);

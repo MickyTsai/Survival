@@ -128,9 +128,13 @@ public class SinglePointGameScene extends Scene implements CommandSolver.MouseCo
         //新增玩家
         players.add(mainPlayer);
         //電腦
-        players.add(new ComputerPlayer(100, 100, AllImages.blue, Player.RoleState.PREY, "1"));
-        players.add(new ComputerPlayer(3000, 100, AllImages.blue, Player.RoleState.PREY, "2"));
-        players.add(new ComputerPlayer(100, 3000, AllImages.blue, Player.RoleState.PREY, "3"));
+        players.add(new ComputerPlayer(100, 100, AllImages.yellow, Player.RoleState.PREY, "1"));
+        players.add(new ComputerPlayer(2634, 2718, AllImages.blue, Player.RoleState.PREY, "2"));
+        players.add(new ComputerPlayer(100, 3000, AllImages.pink, Player.RoleState.PREY, "3"));
+        players.add(new ComputerPlayer(1680, 2850, AllImages.yellow, Player.RoleState.PREY, "4"));
+        players.add(new ComputerPlayer(1700, 300, AllImages.blue, Player.RoleState.PREY, "5"));
+        players.add(new ComputerPlayer(980, 2500, AllImages.green, Player.RoleState.PREY, "6"));
+        players.add(new ComputerPlayer(3000, 3000, AllImages.green, Player.RoleState.PREY, "7"));
 
         //畫面上相關
         runner = new Animation(AllImages.runnerDark);
