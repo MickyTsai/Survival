@@ -66,18 +66,21 @@ public class EditText extends Label implements CommandSolver.KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         if(isEditable && editText==""){
+            Font font=FontLoader.cuteChinese(20);
             g.setColor(Color.black);
             g.drawString(labels.get(count).toString()+hintString,painter().left(),painter().top());
 
         }else {
             g.setColor(Color.black);
-            Font font=new Font("", Font.BOLD,20);
+//            Font font=new Font("", Font.BOLD,20);
+            Font font=FontLoader.cuteChinese(20);
             g.setFont(font);
             g.drawString(editText,painter().left(),painter().top());
         }
         if(isEditable && editText!=""){
             g.setColor(Color.black);
-            Font font=new Font("", Font.BOLD,20);
+//            Font font=new Font("", Font.BOLD,20);
+            Font font=FontLoader.cuteChinese(20);
             g.setFont(font);
             g.drawString(editText+labels.get(count).toString(),painter().left(),painter().top());
         }

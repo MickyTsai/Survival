@@ -37,11 +37,12 @@ public class SingleChooseScene extends Scene implements CommandSolver.MouseComma
         //主選單背景圖
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
 
-
+//        Font font=new Font("",Font.BOLD,40);
+        Font font=FontLoader.cuteChinese(40);
         //文字
         labels = new ArrayList<Label>();
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, Global.SCREEN_Y / 4 + 80, "     POINT MODE  ", FontLoader.Blocks(40)));
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(0).painter().bottom() + 200, " SURVIVAL MODE ", FontLoader.Blocks(40)));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, Global.SCREEN_Y / 4 + 80, "    POINT MODE  ",font));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(0).painter().bottom() + 200, "   SURVIVAL MODE ", font));
 
         //按鈕
         buttons = new ArrayList<Button>();

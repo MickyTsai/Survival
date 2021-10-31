@@ -17,7 +17,8 @@ public class Global {
         RIGHT(5),
         TRANSFORM(6),
         TELEPORTATION(7),
-        ESCAPE(8);
+        ESCAPE(8),
+        ENTER(9);
 
 
         private int value;
@@ -62,6 +63,7 @@ public class Global {
     }
 
     public static final boolean IS_DEBUG = false;
+    public static boolean IS_NIGHTMARE = false;
 
     public static final int UPDATE_TIMES_PER_SEC = 60;
     public static final int NANOSECOUND_PER_UPDATE = 1000000000 / UPDATE_TIMES_PER_SEC;
@@ -127,7 +129,7 @@ public class Global {
     //速度上限
     public static final int SPEED_MAX = 10;
     //速度下限
-    public static final int SPEED_MIN = 2;
+    public static final int SPEED_MIN = 3;
     //地圖上道具數量上限
     public static final int PROPS_AMOUNT_MAX = 10;
 
@@ -143,7 +145,7 @@ public class Global {
     public static final int GAME_SCENE_BOX_SIZE = 100;
 
     public static ArrayList<Image> bumpImg = new ArrayList<Image>(List.of(SceneController.getInstance().imageController().tryGetImage(
-                    new Path().img().actors().bump().Bump1()),
+            new Path().img().actors().bump().Bump1()),
             SceneController.getInstance().imageController().tryGetImage(
                     new Path().img().actors().bump().Bump2()),
             SceneController.getInstance().imageController().tryGetImage(

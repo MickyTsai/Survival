@@ -32,14 +32,15 @@ public class MenuScene extends Scene implements CommandSolver.MouseCommandListen
         //主選單背景圖
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
         AudioResourceController.getInstance().loop(new Path().sound().background().lovelyflower(), -1);
-
+        Font font=FontLoader.cuteChinese(40);
         //文字
         labels = new ArrayList<Label>();
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, Global.SCREEN_Y / 4 - 30, "MENU", FontLoader.Blocks(100)));
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(0).painter().bottom() + 100, "  SINGLE GAME ", FontLoader.Blocks(40)));
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(1).painter().bottom() + 100, "  CREATE ROOM ", FontLoader.Blocks(40)));
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(2).painter().bottom() + 100, "CONNECT ROOM", FontLoader.Blocks(40)));
-        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(3).painter().bottom() + 100, "   TEACH  GAME ", FontLoader.Blocks(40)));
+        labels.add(new Label(Global.SCREEN_X / 3 +30, Global.SCREEN_Y / 4 - 30, "MENU", FontLoader.cuteChinese(130)));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(0).painter().bottom() + 100, "   SINGLE GAME ", font));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(1).painter().bottom() + 100, "   CREATE ROOM ", font));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(2).painter().bottom() + 100, "  CONNECT ROOM", font));
+        labels.add(new Label(Global.SCREEN_X / 3 + 30, labels.get(3).painter().bottom() + 100, "   TEACH  GAME ", font));
+
 
         //按鈕
         buttons = new ArrayList<Button>();

@@ -114,10 +114,10 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         pickProps=false;
         button = new Animation(AllImages.inputButton);
 
-        labels.add(new Label(100,80,"NEXT",FontLoader.Blocks(50)));
+        labels.add(new Label(100,80,"NEXT",FontLoader.cuteChinese(50)));
         buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross)));
         buttons.add(new Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.inputButton)));
-        buttons.add(new Button(labels.get(3).collider().left()-10,labels.get(3).collider().bottom()-50,160,60,new Animation(AllImages.inputButton)));
+        buttons.add(new Button(labels.get(3).collider().left()-10,labels.get(3).collider().bottom()-50,120,60,new Animation(AllImages.inputButton)));
         teach = new Animation(AllImages.teach1);
 
 
@@ -446,22 +446,22 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         mainPlayer = new TeachPlayer(Global.SCREEN_X / 2, Global.SCREEN_Y / 2, AllImages.beige, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y - 100);
         players.add(mainPlayer);
 //        players.add(new TeachComputerPlayer(500, 500, AllImages.blue, Player.RoleState.PREY, Global.SCREEN_X, Global.SCREEN_Y));
-        teachStrings.add("歡迎來到SURVIVAL");
-        teachStrings.add("這裡為基本操作的教學");
-        teachStrings.add("如果是第一次遊玩 請務必操作一次");
-        teachStrings.add("就讓我們開始囉～");
+        teachStrings.add("擊擊擊擊擊歡迎來到SURVIVAL擊擊擊");
+        teachStrings.add("擊擊擊擊這裡為基本操作的教學擊擊擊");
+        teachStrings.add("擊擊如果是第一次遊玩 請務必操作一次");
+        teachStrings.add("擊擊擊擊擊擊就讓我們開始囉～擊擊擊");
         teachStrings.add("");
         teachStrings.add("鍵盤的 W-A-S-D-對應 上-下-左-右- 來移動");
-        teachStrings.add("畫面中間為玩家圖像（像是小小兵）時");
-        teachStrings.add("會有變身的功能");
+        teachStrings.add("擊畫面中間為玩家圖像（像是小小兵）時擊擊");
+        teachStrings.add("擊擊擊擊擊擊會有變身的功能擊擊擊擊擊擊");
         teachStrings.add("");
-        teachStrings.add("移動滑鼠游標（魔法棒）");//10
-        teachStrings.add("點選地圖上的角色(例如：蜜蜂)");
+        teachStrings.add("擊擊擊擊移動滑鼠游標（魔法棒）");//10
+        teachStrings.add("擊擊擊點選地圖上的角色(例如：蜜蜂)");
         teachStrings.add("左下角 右邊格子就會出現可以變身角色的圖");
         teachStrings.add("");
-        teachStrings.add("這時按下鍵盤R 就可以變身成功！ ");
-        teachStrings.add("變身只能維持7秒!要注意！ ");
-        teachStrings.add("操作看看~");
+        teachStrings.add("擊擊這時按下鍵盤R 就可以變身成功！ ");
+        teachStrings.add("擊擊擊擊變身只能維持7秒!要注意！ ");
+        teachStrings.add("擊擊擊擊擊擊擊操作看看~");
         teachStrings.add("");//17
 
         bee= new MovingObstacle(1000, 300, AllImages.bee);
@@ -474,21 +474,21 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
 
 
     private void produceProps() {
-        teachStrings.add("GOOD");
+        teachStrings.add("擊擊擊擊擊擊擊擊擊GOOD擊擊擊擊擊擊");
         teachStrings.add("");
-        teachStrings.add("現在來介紹瞬間移動功能~");
-        teachStrings.add("遊戲中地圖會隨機出現道具");
-        teachStrings.add("道具的功能是 \"隨機\" 的");
-        teachStrings.add("其中一種就是 瞬間移動 ");
+        teachStrings.add("擊擊擊擊擊現在來介紹瞬間移動功能~擊擊");
+        teachStrings.add("擊擊擊擊遊戲中地圖會隨機出現道具擊擊擊");
+        teachStrings.add("擊擊擊擊擊道具的功能是 \"隨機\" 的擊擊");
+        teachStrings.add("擊擊擊擊擊其中一種就是 瞬間移動 擊擊");
         teachStrings.add("");
-        teachStrings.add("當道具為瞬間移動時");//25
-        teachStrings.add("左下角 左邊格子會亮起");
-        teachStrings.add("鍵盤按F 準備發動");
-        teachStrings.add("滑鼠游標會變成光環圖示");
-        teachStrings.add("點選任一地點即可瞬間移動");
-        teachStrings.add("在逃命時非常好用！");
+        teachStrings.add("擊擊擊擊擊當道具為瞬間移動時");//25
+        teachStrings.add("擊擊擊擊擊左下角 左邊格子會亮起");
+        teachStrings.add("擊擊擊擊擊擊鍵盤按F 準備發動");
+        teachStrings.add("擊擊擊擊滑鼠游標會變成光環圖示");
+        teachStrings.add("擊擊擊擊點選任一地點即可瞬間移動");
+        teachStrings.add("擊擊擊擊擊在逃命時非常好用！");
         teachStrings.add("");
-        teachStrings.add("操作看看~");
+        teachStrings.add("擊擊擊擊擊擊擊操作看看~");
         teachStrings.add("");//33
 
         propsArrayList.add(new Props(Global.SCREEN_X / 2, Global.SCREEN_Y / 2 - 100, Props.Type.teleportation));
@@ -499,21 +499,21 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         mainPlayer.setRoleState(Player.RoleState.HUNTER);
         mainPlayer.animationUpdate();
         //擊因為字體沒有因此不會出現，故用來抓區間使用
-        teachStrings.add("GOOD");
+        teachStrings.add("擊擊擊擊擊擊擊擊擊GOOD擊擊擊擊擊擊");
         teachStrings.add("");
-        teachStrings.add("現在要來介紹當成為獵人時");
-        teachStrings.add("玩家圖像會變成現在這個獵人角色");
+        teachStrings.add("擊擊擊擊現在要來介紹當成為獵人時");
+        teachStrings.add("擊擊擊玩家圖像會變成現在這個獵人角色");
         teachStrings.add("");
-        teachStrings.add("這個時候沒有變身功能");
-        teachStrings.add("會換成獨特技能\"暴怒\"");
-        teachStrings.add("\"暴怒\"施放後速度會大增");
-        teachStrings.add("並且暫時看到其他玩家位置");
-        teachStrings.add("還會讓其他玩家移動速度-1 (永久)");
+        teachStrings.add("擊擊擊擊擊這個時候沒有變身功能");
+        teachStrings.add("擊擊擊擊擊會換成獨特技能\"暴怒\"");
+        teachStrings.add("擊擊擊擊\"暴怒\"施放後速度會大增");
+        teachStrings.add("擊擊擊擊並且暫時看到其他玩家位置");
+        teachStrings.add("擊擊擊還會讓其他玩家移動速度-1 (永久)");
         teachStrings.add("");
-        teachStrings.add("多多利用 去追捕其他玩家(去撞他)");
-        teachStrings.add("可以\"奪取他的積分\"並\"換他當獵人\"");
+        teachStrings.add("擊擊擊多多利用 去追捕其他玩家(去撞他)");
+        teachStrings.add("擊擊擊可以\"奪取他的積分\"並\"換他當獵人\"");
         teachStrings.add("");
-        teachStrings.add("操作看看~");
+        teachStrings.add("擊擊擊擊擊擊擊操作看看~");
         teachStrings.add("");
 
     }
@@ -522,10 +522,6 @@ public class TeachScene extends Scene implements CommandSolver.MouseCommandListe
         teachStrings.add("    擊擊可以到遊戲模式遊玩囉擊擊擊");
         teachStrings.add("");
     }
-
-
-
-
 }
 
 

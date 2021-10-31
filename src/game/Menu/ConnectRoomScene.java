@@ -42,17 +42,17 @@ public class ConnectRoomScene extends Scene implements CommandSolver.MouseComman
 
         //文字
         labels = new ArrayList<Label>();
-        labels.add(new Label(buttons.get(0).painter().left(), buttons.get(0).painter().top() - 10, "Please Enter Your Name:", FontLoader.Future(20)));
-        labels.add(new Label(buttons.get(1).painter().left(), buttons.get(1).painter().top() - 10, "Please Enter Your IP:", FontLoader.Future(20)));
-        labels.add(new Label(buttons.get(2).painter().left(), buttons.get(2).painter().top() - 10, "Please Enter Your Port:", FontLoader.Future(20)));
-        labels.add(new Label(buttons.get(3).collider().left() + 40, buttons.get(3).collider().top() + 25, "   BACK ", FontLoader.Future(20)));
-        labels.add(new Label(buttons.get(4).collider().left() + 40, buttons.get(4).collider().top() + 25, " CONNECT ", FontLoader.Future(20)));
-        labels.add(new Label(Global.SCREEN_X-300, 50, " Max People:6 ", FontLoader.Future(20)));
+        labels.add(new Label(buttons.get(0).painter().left(), buttons.get(0).painter().top() - 10, "Please Enter Your Name:", FontLoader.cuteChinese(20)));
+        labels.add(new Label(buttons.get(1).painter().left(), buttons.get(1).painter().top() - 10, "Please Enter Your IP:", FontLoader.cuteChinese(20)));
+        labels.add(new Label(buttons.get(2).painter().left(), buttons.get(2).painter().top() - 10, "Please Enter Your Port:", FontLoader.cuteChinese(20)));
+        labels.add(new Label(buttons.get(3).collider().left() + 40, buttons.get(3).collider().top() + 25, "   BACK ", FontLoader.cuteChinese(20)));
+        labels.add(new Label(buttons.get(4).collider().left() + 40, buttons.get(4).collider().top() + 25, " CONNECT ", FontLoader.cuteChinese(20)));
+        labels.add(new Label(Global.SCREEN_X-300, 50, " Max People:8 ", FontLoader.cuteChinese(20)));
 
         //輸入文字
         editTexts = new ArrayList<EditText>();
-        editTexts.add(new EditText(buttons.get(0).collider().left() + 10, buttons.get(0).collider().top() + 45, "NAME(MaxWords:6)"));
-        editTexts.get(0).setEditLimit(6);
+        editTexts.add(new EditText(buttons.get(0).collider().left() + 10, buttons.get(0).collider().top() + 45, "NAME(MaxWords:10)"));
+        editTexts.get(0).setEditLimit(10);
         editTexts.add(new EditText(buttons.get(1).collider().left() + 10, buttons.get(1).collider().top() + 45, "IP"));
         editTexts.add(new EditText(buttons.get(2).collider().left() + 10, buttons.get(2).collider().top() + 45, "PORT"));
 

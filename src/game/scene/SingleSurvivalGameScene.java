@@ -133,6 +133,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         //預設難度一
         for (ComputerPlayer computerPlayer : computerPlayers) {
             computerPlayer.AILevel1();
+            computerPlayer.setMode(ComputerPlayer.Mode.SINGLE_SURVIVAL_GAME);
         }
         //畫面上相關
         runner = new Animation(AllImages.runnerDark);
@@ -181,6 +182,7 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
         gameObjectList = null;
         this.gameMap = null;
         this.transformObstacles = null;
+        Global.IS_NIGHTMARE = false;
         AudioResourceController.getInstance().stop(currentSound);
     }
 
@@ -234,7 +236,6 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
             }
         }
         camera.paint(g);
-
     }
 
     @Override
@@ -329,13 +330,14 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
 
     /**
      * 遊戲結束前提醒
+     *
      * @param g 繪圖
      */
     private void beforeTimeUp(Graphics g) {
-        if (gameTime > 174 && gameTime < 184){
+        if (gameTime > 174 && gameTime < 184) {
             Label labelTip = new Label(Global.SCREEN_X / 2 - 150, 75, "秒後，遊戲結束！！！", FontLoader.cuteChinese(30));
             labelTip.setColor(Color.BLACK);
-            g.drawImage(point.imgDigits((184 - (int)gameTime) % 10 ),
+            g.drawImage(point.imgDigits((184 - (int) gameTime) % 10),
                     Global.SCREEN_X / 2 - 180,
                     50,
                     30,
@@ -485,31 +487,64 @@ public class SingleSurvivalGameScene extends Scene implements CommandSolver.Mous
     }
 
     public void levelUpdate() {
-        if (timeDelay.count()) {
-            if (lastTime == 140) {
-                AudioResourceController.getInstance().stop(currentSound);
-                currentSound = new Path().sound().background().manyhuterscencefirst();
-                AudioResourceController.getInstance().loop(currentSound, -1);
-                for (ComputerPlayer computerPlayer : computerPlayers) {
-                    computerPlayer.AILevel2();
+        if (!Global.IS_NIGHTMARE) {
+            if (timeDelay.count()) {
+                if (lastTime == 140) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().manyhuterscencefirst();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel2();
+                    }
+                }
+                if (lastTime == 100) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().manyhunterscenemedium();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel3();
+                    }
+                }
+                if (lastTime == 50) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().gamebehindfinal();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel4();
+                    }
                 }
             }
-            if (lastTime == 100) {
-                AudioResourceController.getInstance().stop(currentSound);
-                currentSound = new Path().sound().background().manyhunterscenemedium();
-                AudioResourceController.getInstance().loop(currentSound, -1);
-                for (ComputerPlayer computerPlayer : computerPlayers) {
-                    computerPlayer.AILevel3();
+        } else {
+            if (timeDelay.count()) {
+                if (lastTime == 140) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().manyhuterscencefirst();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    computerPlayers.add(new ComputerPlayer(2300, 3000, AllImages.beige, Player.RoleState.HUNTER, "7"));
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel3();
+                    }
+                }
+                if (lastTime == 100) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().manyhunterscenemedium();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    computerPlayers.add(new ComputerPlayer(2300, 3000, AllImages.beige, Player.RoleState.HUNTER, "8"));
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel4();
+                    }
+                }
+                if (lastTime == 50) {
+                    AudioResourceController.getInstance().stop(currentSound);
+                    currentSound = new Path().sound().background().gamebehindfinal();
+                    AudioResourceController.getInstance().loop(currentSound, -1);
+                    computerPlayers.add(new ComputerPlayer(2300, 3000, AllImages.beige, Player.RoleState.HUNTER, "9"));
+                    for (ComputerPlayer computerPlayer : computerPlayers) {
+                        computerPlayer.AILevel5();
+                    }
                 }
             }
-            if (lastTime == 50) {
-                AudioResourceController.getInstance().stop(currentSound);
-                currentSound = new Path().sound().background().gamebehindfinal();
-                AudioResourceController.getInstance().loop(currentSound, -1);
-                for (ComputerPlayer computerPlayer : computerPlayers) {
-                    computerPlayer.AILevel4();
-                }
-            }
+
         }
     }
 

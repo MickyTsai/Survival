@@ -16,8 +16,6 @@ import game.utils.Path;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class CountPointScene extends Scene implements CommandSolver.MouseCommandListener {
     private ArrayList<Player> players;
@@ -46,6 +44,9 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         labels = null;
         animations = null;
         title = null;
+        ConnectTool.instance().disconnect();
+        Server.instance().close();
+        ConnectTool.reset();
         AudioResourceController.getInstance().stop(new Path().sound().background().countScene());
     }
 
@@ -104,21 +105,15 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
     }
 
     public void sort() {
-//        for (int i = 0; i < players.size() - 1; i++) {
-//            for (int j = 0; j < players.size() - i; j++) {
-//                if (players.get(i).getPoint() < players.get(i + 1).getPoint()) {
-//                    Player tmp = players.get(i);
-//                    players.set(i, players.get(i + 1));
-//                    players.set(i + 1, tmp);
-//                }
-//            }
-//        }
-        Collections.sort(players, new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return o2.getPoint() - o1.getPoint();
+        for (int i = 0; i < players.size() - 1; i++) {
+            for (int j = 0; j < players.size() - i; j++) {
+                if (players.get(i).getPoint() < players.get(i + 1).getPoint()) {
+                    Player tmp = players.get(i);
+                    players.set(i, players.get(i + 1));
+                    players.set(i + 1, tmp);
+                }
             }
-        });
+        }
     }
 
     public void setLabels() {
@@ -154,10 +149,6 @@ public class CountPointScene extends Scene implements CommandSolver.MouseCommand
         }
         if (state == CommandSolver.MouseState.PRESSED) {
             if (Global.mouse.isCollision(button)) {
-                if (ConnectTool.instance().isConnect()) {
-                    ClientClass.getInstance().disConnect();
-                }
-                Server.instance().close();
                 SceneController.getInstance().change(new MenuScene());
             }
         }

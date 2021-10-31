@@ -90,8 +90,10 @@ public class ConnectTool implements GameKernel.GameInterface {
     }
 
     public void disconnect() {
-        ClientClass.getInstance().disConnect();
-        isConnect = false;
+        if (isConnect) {
+            ClientClass.getInstance().disConnect();
+            isConnect = false;
+        }
     }
 
     public void consume() {
@@ -208,9 +210,7 @@ public class ConnectTool implements GameKernel.GameInterface {
                             });
                             break;
                         case PROPS_GEN:
-                            if (serialNum == 100) {
-                                objectArr.getPropsArrConnectPoint().add(new Props(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), Props.propsTypeParse(strs.get(2))));
-                            }
+                            objectArr.getPropsArrConnectPoint().add(new Props(Integer.parseInt(strs.get(0)), Integer.parseInt(strs.get(1)), Props.propsTypeParse(strs.get(2))));
                             break;
                         case COMPUTER_MAINPLAYER_WHOISNEAR:
                             mainPlayers.forEach(player -> {
@@ -256,6 +256,7 @@ public class ConnectTool implements GameKernel.GameInterface {
                                             player.collideProps(objectArr.getPropsArrConnectPoint().get(i));
                                             objectArr.getPropsArrConnectPoint().get(i).setGotByPlayer(true);
                                             objectArr.getPropsArrConnectPoint().remove(i--);
+                                            break;
                                         }
                                     }
 //                                    Props props = objectArr.getPropsArrConnectPoint().get(Integer.parseInt(strs.get(0)));

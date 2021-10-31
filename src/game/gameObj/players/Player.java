@@ -43,10 +43,10 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     }
 
 
-    public final Animation bumpAnimation = new Animation(AllImages.bump, 30);
-    public final Animation hunterAnimation = new Animation(AllImages.HUNTER);
-    public final Animation outrageAnimation = new Animation(AllImages.outrage);
-    public final Animation teleAnimation = new Animation(AllImages.teleAnimation, 5);
+    public Animation bumpAnimation = new Animation(AllImages.bump, 30);
+    private Animation hunterAnimation = new Animation(AllImages.HUNTER);
+    private Animation outrageAnimation = new Animation(AllImages.outrage);
+    private Animation teleAnimation = new Animation(AllImages.teleAnimation, 5);
 
 
     //移動相關
@@ -63,7 +63,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     protected int point; //積分
     protected Player bumpPlayer; //撞到的角色
     protected Delay pointDelay;
-    private Delay collisionDelay;
+    protected Delay collisionDelay;
 
     //變身相關
     protected boolean canTransform;
@@ -113,7 +113,8 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         painter().setCenter(collider().centerX(), collider().centerY());
         point = 0;
         this.name = name;
-        nameLabel = new Label(painter().getX() + 10, painter().getY(), name, FontLoader.Future_Narrow(15), Color.BLACK);
+        Font font = new Font("", Font.BOLD, 15);
+        nameLabel = new Label(painter().getX() + 10, painter().getY(), name, font, Color.BLACK);
 
         canMove = true;
         canPass = true;
@@ -135,7 +136,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         }
 
         pointDelay = new Delay(60);
-        collisionDelay = new Delay(200);
+        collisionDelay = new Delay(180);
         canMoveDelay = new Delay(180);
         transformCD = new Delay(600); //十秒
         transformTime = new Delay(420); //七秒
@@ -171,6 +172,8 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
         addPoint();
         if (id != 0) {
             exchangeUpdateInConnect();
+        } else {
+            exchangeUpdate();
         }
     }
 
@@ -302,7 +305,7 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
     public void exchangeRole(Player player) {
         if (roleState != player.roleState && roleState != RoleState.BUMPING && player.roleState != RoleState.BUMPING) {
             if (isCollision(player)) {
-                if (currentAnimation != bumpAnimation && player.currentAnimation != bumpAnimation) {
+                if (currentAnimation != bumpAnimation && player.currentAnimation != player.bumpAnimation) {
                     bumpPlayer = player;
                     bump(bumpPlayer);
                     pointExchange(bumpPlayer);
@@ -310,6 +313,9 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
                 }
             }
         }
+    }
+
+    public void exchangeUpdate() {
         if (canMoveDelay.count()) {
             roleStateExchange(bumpPlayer);
             canMove = true;
@@ -573,7 +579,9 @@ public class Player extends GameObject implements CommandSolver.KeyListener {
             case superStar:
                 if (Global.IS_DEBUG)
                     System.out.println("超級星星");
+                AudioResourceController.getInstance().stop(new Path().sound().background().superstar());
                 AudioResourceController.getInstance().play(new Path().sound().background().superstar());
+                superStarDelay.stop();
                 superStarDelay.play();
                 isSuperStar = true;
                 currentSpeed = movement.getSpeed();

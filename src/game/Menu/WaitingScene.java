@@ -55,16 +55,15 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
     @Override
     public void sceneBegin() {
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene9());
+
         start = new Label(Global.SCREEN_X / 2 + 200, Global.SCREEN_Y / 2 + 180, "START", FontLoader.Blocks(40));
-        buttons = new Button(start.collider().right() + 40 + 20, start.collider().bottom(), Global.UNIT_WIDTH * 2 + 30, Global.UNIT_HEIGHT, start);
+        buttons = new Button(start.collider().right()  , start.collider().bottom()-40, Global.UNIT_WIDTH * 2 + 50, Global.UNIT_HEIGHT, start);
         try {
             ConnectTool.instance().connect(IP, port);
 
         } catch (Exception e) {
-            SceneController.getInstance().change(new MenuScene());
-        }
-        if (ClientClass.getInstance().getID() >= 108) { //人數 8人限制
-            ConnectTool.instance().disconnect();
+            e.getStackTrace();
+            AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
             SceneController.getInstance().change(new MenuScene());
         }
     }
@@ -126,6 +125,7 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
             }
             if (Global.mouse.isCollision(backButton)) {
                 if (!ConnectTool.instance().isConnect()) {
+                    AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                     SceneController.getInstance().change(new MenuScene());
                     ConnectTool.reset();
                     return;
@@ -133,11 +133,11 @@ public class WaitingScene extends Scene implements CommandSolver.MouseCommandLis
                 if (ClientClass.getInstance().getID() == 100) {
                     ConnectTool.instance().disconnect();
                     Server.instance().close();
-                    ConnectTool.reset();
                 } else {
                     ConnectTool.instance().disconnect();
-                    ConnectTool.reset();
                 }
+                ConnectTool.reset();
+                AudioResourceController.getInstance().pause(new Path().sound().background().lovelyflower());
                 SceneController.getInstance().change(new MenuScene());
             }
         }

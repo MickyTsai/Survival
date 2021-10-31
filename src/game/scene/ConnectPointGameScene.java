@@ -53,9 +53,10 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
     private Image imgVolcano;
     private Image imgVillage;
 
-    //道具生成與消失
+    //道具生成、消失與碰撞
     private Delay propsReProduce;
     private Delay propsRemove;
+    private Delay propsCollision;
 
     //時間計算
     private long startTime;
@@ -124,6 +125,9 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
         //道具相關
         propsReProduce = new Delay(180);
         propsRemove = new Delay(600);
+        propsCollision = new Delay(1);
+        propsCollision.play();
+        propsCollision.loop();
         propsRemove.play();
         propsRemove.loop();
         propsReProduce.play();
@@ -193,7 +197,6 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
     @Override
     public void sceneEnd() {
         AudioResourceController.getInstance().stop(new Path().sound().background().normalgamebehind30final());
-        ConnectTool.reset();
     }
 
     @Override
@@ -264,6 +267,7 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
     @Override
     public void update() {
         if (!isCanMove()) {
+            camera.update();
             return;
         }
         //無法穿越部分物件
@@ -510,13 +514,14 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
      */
     public void propsCollisionCheckUpdate() {
         //道具更新
-
         for (int i = 0; i < propsArrayList.size(); i++) {
             Props props = propsArrayList.get(i);
             if (mainPlayer.isCollision(props)) {
                 mainPlayerCollisionProps = propsArrayList.get(i);
                 allPropsAnimation.get(props.getPropsType()).setPlayPropsAnimation(true);//將此道具的動畫設為開啟
-                ClientClass.getInstance().sent(PLAYER_COLLISION_PROPS, bale(Integer.toString(i)));
+                if (propsCollision.count()) {
+                    ClientClass.getInstance().sent(PLAYER_COLLISION_PROPS, bale(Integer.toString(i)));
+                }
             }
         }
 
@@ -738,6 +743,8 @@ public class ConnectPointGameScene extends Scene implements CommandSolver.MouseC
         g.drawImage(winnerImg, Global.SCREEN_X - 200, 73, 40, 40, null);
         for (int i = 0; i < playersPoint.size(); i++) {
             g.setColor(Color.BLACK);
+            Font font = new Font("", Font.BOLD, 15);
+            g.setFont(font);
             g.drawString(playersPoint.get(i).getName(), Global.SCREEN_X - 132, 100 + i * 20);
             paintPlayersPoint(playersPoint.get(i), Global.SCREEN_X - 165, 87 + i * 22, g);
         }

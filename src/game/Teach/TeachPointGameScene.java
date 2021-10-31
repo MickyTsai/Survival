@@ -22,6 +22,7 @@ public class TeachPointGameScene extends Scene implements CommandSolver.MouseCom
     private Image img;
     private ArrayList<Label> labels;
     private ArrayList<game.Menu.Button> buttons;
+    private Animation animation;
 
 
     @Override
@@ -30,6 +31,7 @@ public class TeachPointGameScene extends Scene implements CommandSolver.MouseCom
 
         labels = new ArrayList<>();
         buttons = new ArrayList<>();
+        animation = new Animation(AllImages.addSpeed,1);
 
         //略過鍵(轉到選單)
         buttons.add(new game.Menu.Button(Global.SCREEN_X - 100, 20, Global.UNIT_WIDTH, Global.UNIT_HEIGHT, new Animation(AllImages.cross)));
@@ -82,14 +84,14 @@ public class TeachPointGameScene extends Scene implements CommandSolver.MouseCom
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
         }
-
+        animation.paint(0, -15, 250, 200, g);
 
         Global.mouse.paint(g);
     }
 
     @Override
     public void update() {
-
+        animation.update();
     }
 
     @Override

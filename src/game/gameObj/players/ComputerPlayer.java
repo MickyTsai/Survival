@@ -59,7 +59,7 @@ public class ComputerPlayer extends Player {
 
     public ComputerPlayer(int x, int y, ImgArrAndType imageArrayList, RoleState roleState, String num) {
         super(x, y, imageArrayList, roleState, " COM" + " " + num);
-        this.mode = mode;
+        mode = Mode.SINGLE_POINT_GAME;
         speed = Global.COMPUTER_SPEED1;
         chaseDistance = Global.COMPUTER_CHASE_DISTANCE2;
         transformTime.play();
@@ -89,6 +89,7 @@ public class ComputerPlayer extends Player {
         super(x, y, imageArrayList, roleState, " COM" + " " + num);
         isConnect = true;
         speed = Global.COMPUTER_SPEED2;
+        mode = Mode.SINGLE_POINT_GAME;
         chaseDistance = Global.COMPUTER_CHASE_DISTANCE2;
         transformTime.play();
         transformTime.loop();
@@ -129,6 +130,7 @@ public class ComputerPlayer extends Player {
         propsEffectUpdate();
         nonStopUpdate();
         transformResetUpdate();
+        exchangeUpdate();
         chaseProps();
         addPoint();
         currentAnimation.update();
@@ -179,6 +181,9 @@ public class ComputerPlayer extends Player {
     }
 
     public void hunterUpdate() {
+        if (Global.getProbability(10) && mode == Mode.SINGLE_POINT_GAME) {
+            outrage();
+        }
         if (isChase) {
             chase();
         } else {
@@ -239,6 +244,19 @@ public class ComputerPlayer extends Player {
         }
         cpMove(moveOnX, moveOnY);
         setSpeed(Global.COMPUTER_SPEED2);
+    }
+
+    @Override
+    public void exchangeUpdate() {
+        if (canMoveDelay.count()) {
+            roleStateExchange(bumpPlayer);
+            canMove = true;
+            bumpPlayer.canMove = true;
+        }
+        if (collisionDelay.count()) {
+            animationUpdate();
+            bumpPlayer.animationUpdate();
+        }
     }
 
     private void chase() {
@@ -541,6 +559,15 @@ public class ComputerPlayer extends Player {
         notStopDelay.loop();
     }
 
+    public void AILevel5() {
+        setSpeed(Global.COMPUTER_SPEED4 + 1);
+        chaseDistance = Global.COMPUTER_CHASE_DISTANCE4;
+        propsChaseDistance = Global.COMPUTER_PROPS_CHASE_DISTANCE3;
+        giveUpDistance = Global.COMPUTER_GIVE_UP_DISTANCE4;
+        notStopDelay.play();
+        notStopDelay.loop();
+    }
+
 
     public void translateInConnect(int x, int y) {
         if (isConnect) {
@@ -554,5 +581,9 @@ public class ComputerPlayer extends Player {
     public void setSpeed(int speed) {
         this.speed = speed;
         movement.setSpeed(this.speed);
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
     }
 }

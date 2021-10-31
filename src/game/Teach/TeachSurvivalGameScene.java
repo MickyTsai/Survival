@@ -4,6 +4,7 @@ import game.Menu.Button;
 import game.Menu.FontLoader;
 import game.Menu.Label;
 import game.Menu.MenuScene;
+import game.controllers.AudioResourceController;
 import game.controllers.SceneController;
 import game.core.Global;
 import game.graphic.AllImages;
@@ -17,15 +18,21 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class TeachSurvivalGameScene extends Scene implements CommandSolver.MouseCommandListener {
+public class TeachSurvivalGameScene extends Scene implements CommandSolver.MouseCommandListener, CommandSolver.KeyListener {
     private Image img;
     private ArrayList<Label> labels;
     private ArrayList<game.Menu.Button> buttons;
+    private Animation animation;
+
+    private boolean isN = false;
+    private boolean isO = false;
+    private boolean right = false;
+    private boolean left = false;
 
     @Override
     public void sceneBegin() {
         img = SceneController.getInstance().imageController().tryGetImage(new Path().img().menu().Scene().scene8());
-
+        animation = new Animation(AllImages.HUNTER, 10);
         labels = new ArrayList<>();
         buttons = new ArrayList<>();
 
@@ -79,6 +86,7 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
         for (int i = 0; i < labels.size(); i++) {
             labels.get(i).paint(g);
         }
+        animation.paint(20, 25, 125, 125, g);
 
 
         Global.mouse.paint(g);
@@ -86,7 +94,16 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
 
     @Override
     public void update() {
-
+        animation.update();
+        if (isN && isO && right && left) {
+            Global.IS_NIGHTMARE = true;
+            AudioResourceController.getInstance().play(new Path().sound().background().outrage());
+            animation = new Animation(AllImages.HUNTER, 1);
+            isN = false;
+            isO = false;
+            left = false;
+            right = false;
+        }
     }
 
     @Override
@@ -96,7 +113,7 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
 
     @Override
     public CommandSolver.KeyListener keyListener() {
-        return null;
+        return this;
     }
 
     @Override
@@ -111,6 +128,32 @@ public class TeachSurvivalGameScene extends Scene implements CommandSolver.Mouse
             }
         }
         Global.mouse.mouseTrig(e, state, trigTime);
+
+    }
+
+    @Override
+    public void keyPressed(int commandCode, long trigTime) {
+
+    }
+
+    @Override
+    public void keyReleased(int commandCode, long trigTime) {
+        if (commandCode == 96) {
+            isN = true;
+        }
+        if (commandCode == 97) {
+            isO = true;
+        }
+        if (commandCode == 98) {
+            left = true;
+        }
+        if (commandCode == 99) {
+            right = true;
+        }
+    }
+
+    @Override
+    public void keyTyped(char c, long trigTime) {
 
     }
 }
